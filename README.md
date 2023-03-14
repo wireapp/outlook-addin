@@ -1,2 +1,3 @@
 # outlook-addin
-Wire add-in for Microsoft Outlook 
+
+Wire add-in for Microsoft Outlook
