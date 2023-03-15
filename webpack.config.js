@@ -4,6 +4,7 @@ const devCerts = require("office-addin-dev-certs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const path = require("path");
 
 const urlDev = "https://localhost:3000/";
 const urlProd = "https://localhost:3000/"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
@@ -21,10 +22,11 @@ module.exports = async (env, options) => {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
       vendor: ["react", "react-dom", "core-js", "@fluentui/react"],
       taskpane: ["react-hot-loader/patch", "./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
-      commands: "./src/commands/commands.ts",
+      commands: ["./src/commands/commands.ts", "./src/commands/commands.html"],
     },
     output: {
-      clean: true,
+      path: path.resolve(__dirname, "dist"),
+      filename: "[name].js",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
