@@ -3,7 +3,7 @@ WORKDIR /app
 COPY ./package.json /app/
 RUN npm install
 COPY . /app
-COPY ./server/certificate /certs
+COPY ./certs /certs
 RUN npm run build
 
 FROM nginx
