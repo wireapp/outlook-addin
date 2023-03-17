@@ -1,6 +1,7 @@
 version: "3.8"
 services:
   nginx:
+    image: veki301/outlook-client
     stdin_open: true
     depends_on:
       - api
@@ -14,6 +15,7 @@ services:
     ports:
       - 80:80
   api:
+    image: veki301/outlook-api
     build:
       dockerfile: Dockerfile
       context: ./server
