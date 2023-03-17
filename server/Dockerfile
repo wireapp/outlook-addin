@@ -1,10 +1,8 @@
 FROM node as build
-WORKDIR /app
-COPY ./package.json /app/
+WORKDIR /api
+COPY ./package.json /api/
 RUN npm install
-COPY . /app
-COPY ./certs /certs
-RUN npm run build
+COPY . /api
 
 EXPOSE 4000
 CMD ["node", "server.js"]
