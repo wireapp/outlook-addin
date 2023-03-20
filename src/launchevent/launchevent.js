@@ -18,7 +18,8 @@ const teamIdStaging = "34e0d2d9-db1b-4029-8e01-471a11374dd5";
 
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 const token = localStorage.getItem('token');
-  async function createGroupConversation(name) {
+
+async function createGroupConversation(name) {
   const payload = {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],

@@ -6,9 +6,9 @@
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire integration for outlook."/>
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://localhost:3000/support.html"/>
+  <IconUrl DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://outlook.integrations.zinfra.io/support.html"/>
   <AppDomains>
   <!-- This is needed to avoid CORS, outlook side -->
     <AppDomain>https://localhost:3000</AppDomain>
@@ -27,7 +27,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+        <SourceLocation DefaultValue="https://outlook.integrations.zinfra.io/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -117,19 +117,19 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="icon-16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
-        <bt:Image id="icon-32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-        <bt:Image id="icon-48" DefaultValue="https://localhost:3000/assets/icon-48.png"/>
-        <bt:Image id="icon-64" DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-        <bt:Image id="icon-80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="icon-16" DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-32.png"/>
+        <bt:Image id="icon-48" DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-48.png"/>
+        <bt:Image id="icon-64" DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-64.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://outlook.integrations.zinfra.io/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://outlook.integrations.zinfra.io/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://outlook.integrations.zinfra.io/taskpane.html"/>
         <!-- Entry for event based activation. -->
-        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://localhost:3000/commands.html" />
+        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://outlook.integrations.zinfra.io/commands.html" />
         <!-- Entry needed for Outlook on Windows. -->
-        <bt:Url id="JSRuntime.Url" DefaultValue="https://localhost:3000/launchevent.js" />
+        <bt:Url id="JSRuntime.Url" DefaultValue="https://outlook.integrations.zinfra.io/launchevent.js" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire"/>
