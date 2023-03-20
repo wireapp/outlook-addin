@@ -15,6 +15,7 @@
     <AppDomain>https://prod-nginz-https.wire.com</AppDomain>
     <AppDomain>https://app.wire.com</AppDomain>
     <AppDomain>https://staging-nginz-https.zinfra.io</AppDomain>
+    <AppDomain>https://wire-webapp-edge.zinfra.io/</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
