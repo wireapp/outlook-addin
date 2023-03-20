@@ -55,9 +55,11 @@ jobs:
       - name: Prepare new name of the image
         run: |
           echo "NEW_IMAGE=${{ env.DOCKER_IMAGE }}@${{ steps.docker_build.outputs.digest }}" >> $GITHUB_ENV
-          - name: Enable auth plugin
-            run: |
-              echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+
+      - name: Enable auth plugin
+        run: |
+          echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+
       # Auth to GKE
       - name: Authenticate to GKE
         uses: google-github-actions/auth@v1
