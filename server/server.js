@@ -1,7 +1,12 @@
 const { default: axios } = require("axios");
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use(cors({
+  origin: 'https://wire-webapp-edge.zinfra.io'
+}));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
