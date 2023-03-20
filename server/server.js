@@ -39,6 +39,8 @@ app.get("/oauth2callback", (req, res) => {
         "<script>document.addEventListener('DOMContentLoaded', function () { localStorage.setItem('token', ''); }, false);</script>" +
         "</body></html>");
       });
+  } else {
+    res.send("");
   }
 });
 
