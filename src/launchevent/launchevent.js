@@ -14,14 +14,11 @@ let mailboxItem;
 // API
 
 // TODO: should not be hardcoded
-const teamIdStaging = "6da5733c-e610-48cf-917c-a8d27ec89d72";
-//const teamId = "e1684e2f-39d8-4caf-8e11-0da24a46280b";
-////////////////////////////////
+const teamIdStaging = "34e0d2d9-db1b-4029-8e01-471a11374dd5";
 
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
-const token =
-  "jhTLe7976eKSLkYvRivQdRc3qdUJ3ZBrkbYd-bbP4BVBJDDeOriHhLzUDeCF0Yr-ZmVbPimJsRz9iM4j6FakAQ==.v=1.k=1.d=1678804954.t=a.l=.u=af00d8c1-2db0-4c9b-9325-8bd6b99ec33f.c=17416113092734515117";
-async function createGroupConversation(name) {
+const token = localStorage.getItem('token');
+  async function createGroupConversation(name) {
   const payload = {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],
