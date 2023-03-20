@@ -5,7 +5,7 @@ const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: 'https://wire-webapp-edge.zinfra.io'
+  origin: ['https://wire-webapp-edge.zinfra.io', 'https://staging-nginz-https.zinfra.io']
 }));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
