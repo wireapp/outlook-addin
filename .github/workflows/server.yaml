@@ -56,12 +56,13 @@ jobs:
           docker build -t ${{ steps.docker_meta.outputs.tags }} server
 
       - name: Push Docker image
+        id: docker_push
         run: |
           docker push ${{ steps.docker_meta.outputs.tags }}
 
       - name: Prepare new name of the image
         run: |
-          echo "NEW_IMAGE=${{ env.DOCKER_IMAGE }}@${{ steps.docker_build.outputs.digest }}" >> $GITHUB_ENV
+          echo "NEW_IMAGE=${{ env.DOCKER_IMAGE }}@${{ steps.docker_push.outputs.digest }}" >> $GITHUB_ENV
 
       - name: Enable auth plugin
         run: |
