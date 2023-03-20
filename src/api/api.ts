@@ -7,8 +7,10 @@ const teamIdStaging = "6da5733c-e610-48cf-917c-a8d27ec89d72";
 ////////////////////////////////
 
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
-const token =
-  "PJzDii8qJEq1MTqFxWz_H7PfpE-OcesUcUTlfG1PjvhRhGY4cRkAwVvy4GeJ8JIDsBNb9pKmxPmAZspHJQHMCQ==.v=1.k=1.d=1678799020.t=a.l=.u=af00d8c1-2db0-4c9b-9325-8bd6b99ec33f.c=1027538287993572329";
+
+// TODO: remove this for proper token impl
+// NOTE: use this only when testing locally, never push a token into repo
+const token = undefined;
 
 export async function createGroupConversation(name: string) {
   const payload = {
