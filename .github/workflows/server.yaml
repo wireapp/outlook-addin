@@ -9,6 +9,12 @@ env:
   DOCKER_IMAGE: wire-bot/outlook-addin-server
   SERVICE_NAME: outlook-api-app
 
+  GKE_PROJECT: wire-bot
+  GKE_ZONE: europe-west1-c
+  GCR_REPOSITORY: eu.gcr.io
+  GKE_CLUSTER: dagobah
+
+  NAMESPACE: staging
 jobs:
   publish:
     name: Deployment to Bots Infrastructure
