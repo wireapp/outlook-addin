@@ -29,15 +29,6 @@ jobs:
           echo -e "COMMIT_MESSAGE = ${COMMIT_MESSAGE}"
           echo -e "GITHUB_CONTEXT = ${GITHUB_CONTEXT}"
 
-      - name: Yarn cache
-        uses: c-hive/gha-yarn-cache@v1
-
-      - name: Install JS dependencies
-        run: yarn --frozen-lockfile
-
-      - name: Build
-        run: yarn bundle
-
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
