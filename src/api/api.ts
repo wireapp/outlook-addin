@@ -5,6 +5,7 @@ const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 const token = localStorage.getItem('token');
 
 export async function createGroupConversation(name: string) {
+  const teamId = getTeamId();
   const payload = {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],
@@ -15,7 +16,7 @@ export async function createGroupConversation(name: string) {
     receipt_mode: 1,
     team: {
       managed: false,
-      teamid: getTeamId(),
+      teamid: teamId,
     },
     users: [],
   };
@@ -56,7 +57,8 @@ export async function getTeamId() {
   }).then((r) => r.json());
 
   console.log("getTeamId:");
-  console.log("response.team:", response.team);
+  const teamId = response.team;
+  console.log("response.team:", teamId);
 
-  return response.team;
+  return teamId;
 }

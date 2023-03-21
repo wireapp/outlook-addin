@@ -17,6 +17,7 @@ const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 const token = localStorage.getItem('token');
 
 async function createGroupConversation(name) {
+  const teamId = getTeamId();
   const payload = {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],
@@ -27,7 +28,7 @@ async function createGroupConversation(name) {
     receipt_mode: 1,
     team: {
       managed: false,
-      teamid: getTeamId(),
+      teamid: teamId,
     },
     users: [],
   };
@@ -135,13 +136,13 @@ function appendToBody(item, contentToAppend, event) {
 }
 
 async function getTeamId() {
-  const teamId = await fetch(apiUrl + `/self`, {
+  const response = await fetch(apiUrl + `/self`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((r) => r.json()).then((data) => data.team);
+  }).then((r) => r.json());
 
-  return teamId;
+  return response.team;
 }
