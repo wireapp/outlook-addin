@@ -14,7 +14,7 @@ let mailboxItem;
 
 export function test() {
   const tokenExpired: boolean = true;
-  let isLoggedIn: boolean = false;
+  let isLoggedIn: boolean = true;
 
   let dialog;
 
@@ -24,19 +24,8 @@ export function test() {
       function (asyncResult) {
           dialog = asyncResult.value;
           console.log(asyncResult.value);
-          dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
       }
   );
-
-  function processMessage(arg) {
-    const messageFromDialog = JSON.parse(arg.message);
-    console.log("messageFromDialog.messageType:", messageFromDialog.messageType);
-    if (messageFromDialog.messageType === "signinSuccess") {
-        dialog.close();
-    } else {
-        dialog.close();
-    }
-  }
 
   if(isLoggedIn) {
     getSubject(mailboxItem, (subject) => {
