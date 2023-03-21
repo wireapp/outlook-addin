@@ -12,20 +12,68 @@ Office.onReady(function () {
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
-export function test() {
-  getSubject(mailboxItem, (subject) => {
-    createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
-      createGroupLink(r).then((r) => {
-        const groupLink = `<a href="${r}">${r}</a>`;
-        appendToBody(mailboxItem, groupLink);
-      });
-    });
-  });
+let pendingCreateConversation = false;
 
+export function test() {
+  let isLoggedIn: boolean = false;
+
+  let dialog;
+
+  pendingCreateConversation = true;
+
+  const token = localStorage.getItem('token');
+  const refreshToken = localStorage.getItem('refresh_token');
+  console.log('token from local storage: ', token);
+  console.log('refresh token from local storage: ', refreshToken);
+
+  if(!token && !refreshToken) {
+    console.log('open dialog');
+
+    Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 60, width: 40 }, (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("dialog result failed: " + asyncResult.error.message);
+      } else {
+        const dialog = asyncResult.value;
+        dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
+          console.log('DialogMessageReceived');
+          const authResult = JSON.parse(messageEvent.message) as any;
+          console.log('Auth result:', authResult);
+          localStorage.setItem('token', authResult.token);
+          localStorage.setItem('refresh_token', authResult.refresh_token);
+
+          if(pendingCreateConversation) {
+            createGroupConversationForCurrentMeeting();
+            pendingCreateConversation = false;
+          }
+
+          dialog.close();
+        });
+      }
+    });
+  } else {
+    if(pendingCreateConversation) {
+      createGroupConversationForCurrentMeeting();
+      pendingCreateConversation = false;
+    }
+  }
+  
   // maybe can be done better ?
   // createMeetingLinkElement().then((meetingLink) => {
   //   appendToBody(mailboxItem, meetingLink);
   // });
+}
+
+function createGroupConversationForCurrentMeeting() {
+  getSubject(mailboxItem, (subject) => {
+    createGroupConversation(subject ? subject : defaultSubjectValue).then((r) => {
+      if(r) {
+        createGroupLink(r).then((r) => {
+          const groupLink = `<a href="${r}">${r}</a>`;
+          appendToBody(mailboxItem, groupLink);
+        });
+      }
+    });
+  });
 }
 
 function addMeetingLink() {
