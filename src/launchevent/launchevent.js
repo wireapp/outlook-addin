@@ -135,13 +135,13 @@ function appendToBody(item, contentToAppend, event) {
 }
 
 async function getTeamId() {
-  const response = await fetch(apiUrl + `/self`, {
+  const teamId = await fetch(apiUrl + `/self`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((r) => r.json());
+  }).then((r) => r.json()).then((data) => data.team);
 
-  return response.data.team;
+  return teamId;
 }

@@ -47,14 +47,13 @@ export async function createGroupLink(conversationId: string) {
 }
 
 export async function getTeamId() {
-  // TODO: any/model
-  const response: any = await fetch(apiUrl + `/self`, {
+  const teamId: string = await fetch(apiUrl + `/self`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-  }).then((r) => r.json());
+  }).then((r) => r.json()).then((data) => data.team);
 
-  return response.data.team;
+  return teamId;
 }
