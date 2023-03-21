@@ -13,20 +13,48 @@ const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
 export function test() {
-  getSubject(mailboxItem, (subject) => {
-    createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
-      createGroupLink(r).then((r) => {
-        const groupLink = `<a href="${r}">${r}</a>`;
-        appendToBody(mailboxItem, groupLink);
+  const tokenExpired: boolean = true;
+  let isLoggedIn: boolean = false;
+
+  let dialog;
+
+  console.log('open dialog');
+
+  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', {width: 800, height: 600, },
+      function (asyncResult) {
+          dialog = asyncResult.value;
+          console.log(asyncResult.value);
+          dialog.addEventHandler(Office.EventType.DialogMessageReceived, processMessage);
+      }
+  );
+
+  function processMessage(arg) {
+    const messageFromDialog = JSON.parse(arg.message);
+    console.log("messageFromDialog.messageType:", messageFromDialog.messageType);
+    if (messageFromDialog.messageType === "signinSuccess") {
+        dialog.close();
+    } else {
+        dialog.close();
+    }
+  }
+
+  if(isLoggedIn) {
+    getSubject(mailboxItem, (subject) => {
+      createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
+        createGroupLink(r).then((r) => {
+          const groupLink = `<a href="${r}">${r}</a>`;
+          appendToBody(mailboxItem, groupLink);
+        });
       });
     });
-  });
-
+  }
+  
   // maybe can be done better ?
   // createMeetingLinkElement().then((meetingLink) => {
   //   appendToBody(mailboxItem, meetingLink);
   // });
 }
+
 
 function addMeetingLink() {
   test();
