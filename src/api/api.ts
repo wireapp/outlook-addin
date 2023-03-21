@@ -56,8 +56,7 @@ export async function getTeamId() {
   }).then((r) => r.json());
 
   console.log("getTeamId:");
-  console.log("response.data:", response.data);
-  console.log("response.data.team:", response.data.team);
+  console.log("response.team:", response.team);
 
-  return response.data.team;
+  return response.team;
 }
