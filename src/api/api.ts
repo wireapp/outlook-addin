@@ -1,9 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, fetch, console */
 
-// TODO: should not be hardcoded
-const teamIdStaging = "34e0d2d9-db1b-4029-8e01-471a11374dd5";
-
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 const token = localStorage.getItem('token');
 
@@ -18,7 +15,7 @@ export async function createGroupConversation(name: string) {
     receipt_mode: 1,
     team: {
       managed: false,
-      teamid: teamIdStaging,
+      teamid: getTeamId(),
     },
     users: [],
   };
@@ -47,4 +44,17 @@ export async function createGroupLink(conversationId: string) {
   }).then((r) => r.json());
 
   return response.data.uri;
+}
+
+export async function getTeamId() {
+  // TODO: any/model
+  const response: any = await fetch(apiUrl + `/self`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+
+  return response.data.team;
 }

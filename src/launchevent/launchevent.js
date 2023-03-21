@@ -13,9 +13,6 @@ let mailboxItem;
 
 // API
 
-// TODO: should not be hardcoded
-const teamIdStaging = "34e0d2d9-db1b-4029-8e01-471a11374dd5";
-
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 const token = localStorage.getItem('token');
 
@@ -30,7 +27,7 @@ async function createGroupConversation(name) {
     receipt_mode: 1,
     team: {
       managed: false,
-      teamid: teamIdStaging,
+      teamid: getTeamId(),
     },
     users: [],
   };
@@ -135,4 +132,16 @@ function appendToBody(item, contentToAppend, event) {
   getBody(item, (currentBody) => {
     setBody(item, currentBody + contentToAppend, event);
   });
+}
+
+async function getTeamId() {
+  const response = await fetch(apiUrl + `/self`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((r) => r.json());
+
+  return response.data.team;
 }
