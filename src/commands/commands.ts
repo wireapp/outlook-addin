@@ -27,8 +27,10 @@ export function test() {
       const dialog = asyncResult.value;
       dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
         console.log('DialogMessageReceived');
-        const authResult = messageEvent.message as string;
-        console.log(`Auth result: ${authResult}`);
+        const authResult = JSON.parse(messageEvent.message) as any;
+        console.log('Auth result:', authResult);
+        localStorage.setItem('token', authResult.token);
+        localStorage.setItem('refresh_token', authResult.refresh_token);
         dialog.close();
       });
     }
