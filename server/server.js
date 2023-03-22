@@ -1,10 +1,12 @@
 const { default: axios } = require("axios");
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
@@ -46,8 +48,37 @@ app.get("/oauth2callback", (req, res) => {
   }
 });
 
+app.post("/refreshToken", (req, res) => {
+
+  axios
+    .post(
+      "https://staging-nginz-https.zinfra.io/oauth/token",
+      {
+        grant_type: "refresh_token",
+        client_id: "91ab148a-4b6c-4eac-aab6-60f316912f4d",
+        client_secret: "92f7b4d4613f0e70ebf391a8f108e90c536bbccecb2b3eba59de32102a9831bf",
+        refresh_token: req.body.refresh_token,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }
+    )
+    .then((result) => {
+      console.log(result.data);
+      res.send(result.data);
+    })
+    .catch((err) => {
+      console.log('error: ' + err.response.data.message);
+      res.send("");
+    });
+});
+
 app.get("/login", (req, res) => {
     res.send("<html><head></head><body>" +
     "<script>document.addEventListener('DOMContentLoaded', function () { window.location.replace('https://wire-webapp-edge.zinfra.io/auth?client_id=91ab148a-4b6c-4eac-aab6-60f316912f4d&state=boop&response_type=code&redirect_uri=https://outlook.integrations.zinfra.io/oauth2callback&scope=write%3Aconversations+write%3Aconversations_code+read%3Aself+read%3Afeature_configs#/authorize'); }, false);</script>" +
     "</body></html>");
 });
+

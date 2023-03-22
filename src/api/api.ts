@@ -1,10 +1,17 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, fetch, console */
 
+import jwt_decode from "jwt-decode";
+
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 
 export async function createGroupConversation(name: string) {
   const token = localStorage.getItem('token');
+  const refreshToken = localStorage.getItem('refresh_token');
+  if(!token || !isTokenStillValid(token)) {
+    const newTokens = await refreshAccessToken(refreshToken);
+    console.log("new tokens: ", newTokens);
+  }
   const teamId = await getTeamId();
   const payload = {
     access: ["invite", "code"],
@@ -59,4 +66,25 @@ export async function getTeamId() {
   }).then((r) => r.json());
 
   return response.team;
+}
+
+export async function isTokenStillValid(token: string) {
+  const decodedToken = jwt_decode(token) as any;
+  return decodedToken.exp * 1000 > (new Date()).getTime();
+}
+
+export async function refreshAccessToken(refresh_token: string) {
+  const payload = {
+    refresh_token
+  };
+
+  const response: any = await fetch('/refreshToken/', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  }).then((r) => r.json());
+
+  return response.data;
 }
