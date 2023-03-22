@@ -6,13 +6,16 @@ import jwt_decode from "jwt-decode";
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 
 export async function createGroupConversation(name: string) {
+  console.log('BEGIN createGroupConversation');
   let token = localStorage.getItem('token');
   let refreshToken = localStorage.getItem('refresh_token');
   if(token && !isTokenStillValid(token)) {
+    console.log('removing token as it is not valid');
     localStorage.removeItem('token');
     token = null;
   }
   if(!token && isTokenStillValid(refreshToken)) {
+    console.log('refreshing token');
     const newTokens = await refreshAccessToken(refreshToken);
     console.log("new tokens: ", newTokens);
     token = newTokens.access_token;
@@ -21,6 +24,7 @@ export async function createGroupConversation(name: string) {
     localStorage.setItem('refresh_token', refreshToken);
   }
   if(token && isTokenStillValid(token)) {
+    console.log('token is still valid: ', token);
     const teamId = await getTeamId();
     const payload = {
       access: ["invite", "code"],
