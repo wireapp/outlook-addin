@@ -9,7 +9,15 @@ export async function createGroupConversation(name: string) {
   console.log('BEGIN createGroupConversation');
   let token = localStorage.getItem('token');
   let refreshToken = localStorage.getItem('refresh_token');
-  if(token && !isTokenStillValid(token)) {
+  if(token) {
+    console.log('token exists');
+  }
+  if(isTokenStillValid(token)) {
+    console.log('token is valid');
+  } else {
+    console.log('token is NOT valid');
+  }
+  if(!isTokenStillValid(token)) {
     console.log('removing token as it is not valid');
     localStorage.removeItem('token');
     token = null;
@@ -85,13 +93,17 @@ export async function getTeamId() {
 }
 
 export async function isTokenStillValid(token: string) {
-  const decodedToken = jwt_decode(token) as any;
-  console.log('isTokenStillValid for:');
-  console.log(token);
-  const currentDate = new Date();
-  const currentTime = currentDate.getTime();
-  console.log(decodedToken.exp * 1000 > currentTime);
-  return decodedToken.exp * 1000 > currentTime;
+  if(token) {
+    const decodedToken = jwt_decode(token) as any;
+    console.log('isTokenStillValid for:');
+    console.log(token);
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+    console.log(decodedToken.exp * 1000 > currentTime);
+    return decodedToken.exp * 1000 > currentTime;
+  } 
+  
+  return false;
 }
 
 export async function refreshAccessToken(refresh_token: string) {
