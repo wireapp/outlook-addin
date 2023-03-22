@@ -20,16 +20,16 @@ export function test() {
 
   console.log('open dialog');
 
-  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 600, width: 800 },
+  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 50, width: 50 },
     (result: Office.AsyncResult<Office.Dialog>) => {
       const dialog = result.value;
   
       dialog.addEventHandler(Office.EventType.DialogMessageReceived, (args: Office.DialogParentMessageReceivedEventArgs) => {
         const messageFromDialog = args.message;
   
-        dialog.close();
         console.log("messageParent:", messageFromDialog);
         Office.context.ui.messageParent(messageFromDialog);
+        dialog.close();
       });
     }
   );
