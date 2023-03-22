@@ -31,7 +31,7 @@ export async function createGroupConversation(name: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('refresh_token', refreshToken);
   }
-  if(token && await isTokenStillValid(token)) {
+  if(token && (await isTokenStillValid(token))) {
     console.log('token is still valid: ', token);
     const teamId = await getTeamId();
     const payload = {
