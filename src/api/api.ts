@@ -22,7 +22,7 @@ export async function createGroupConversation(name: string) {
     localStorage.removeItem('token');
     token = null;
   }
-  if(!token && await isTokenStillValid(refreshToken)) {
+  if(!token && (await isTokenStillValid(refreshToken))) {
     console.log('refreshing token');
     const newTokens = await refreshAccessToken(refreshToken);
     console.log("new tokens: ", newTokens);
