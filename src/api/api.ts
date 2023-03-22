@@ -88,10 +88,10 @@ export async function isTokenStillValid(token: string) {
   const decodedToken = jwt_decode(token) as any;
   console.log('isTokenStillValid for:');
   console.log(token);
-  console.log("checking ", decodedToken.exp * 1000);
-  console.log("> ", (new Date()).getTime());
-  console.log(decodedToken.exp * 1000 > (new Date()).getTime());
-  return decodedToken.exp * 1000 > (new Date()).getTime();
+  const currentDate = new Date();
+  const currentTime = currentDate.getTime();
+  console.log(decodedToken.exp * 1000 > currentTime);
+  return decodedToken.exp * 1000 > currentTime;
 }
 
 export async function refreshAccessToken(refresh_token: string) {
