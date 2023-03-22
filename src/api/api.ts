@@ -74,7 +74,7 @@ export async function isTokenStillValid(token: string) {
 }
 
 export async function refreshAccessToken(refresh_token: string) {
-  const formBody = encodeURIComponent("refresh-token") + "=" + encodeURIComponent(refresh_token);
+  const formBody = encodeURIComponent("refresh_token") + "=" + encodeURIComponent(refresh_token);
   const response: any = await fetch('/refreshToken/', {
     method: "POST",
     headers: {
