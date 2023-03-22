@@ -22,29 +22,39 @@ export function test() {
 
   pendingCreateConversation = true;
 
-  console.log('open dialog');
+  const token = localStorage.getItem('token');
+  console.log('token from local storage: ', token);
 
-  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 60, width: 40 }, (asyncResult) => {
-    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-      console.error("dialog result failed: " + asyncResult.error.message);
-    } else {
-      const dialog = asyncResult.value;
-      dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
-        console.log('DialogMessageReceived');
-        const authResult = JSON.parse(messageEvent.message) as any;
-        console.log('Auth result:', authResult);
-        localStorage.setItem('token', authResult.token);
-        localStorage.setItem('refresh_token', authResult.refresh_token);
+  if(!token) {
+    console.log('open dialog');
 
-        if(pendingCreateConversation) {
-          createGroupConversationForCurrentMeeting();
-          pendingCreateConversation = false;
-        }
+    Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 60, width: 40 }, (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("dialog result failed: " + asyncResult.error.message);
+      } else {
+        const dialog = asyncResult.value;
+        dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
+          console.log('DialogMessageReceived');
+          const authResult = JSON.parse(messageEvent.message) as any;
+          console.log('Auth result:', authResult);
+          localStorage.setItem('token', authResult.token);
+          localStorage.setItem('refresh_token', authResult.refresh_token);
 
-        dialog.close();
-      });
+          if(pendingCreateConversation) {
+            createGroupConversationForCurrentMeeting();
+            pendingCreateConversation = false;
+          }
+
+          dialog.close();
+        });
+      }
+    });
+  } else {
+    if(pendingCreateConversation) {
+      createGroupConversationForCurrentMeeting();
+      pendingCreateConversation = false;
     }
-  });
+  }
   
   // maybe can be done better ?
   // createMeetingLinkElement().then((meetingLink) => {
