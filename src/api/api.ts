@@ -21,7 +21,7 @@ export async function createGroupConversation(name: string) {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],
     conversation_role: "wire_member",
-    name: name ?? "New appointment",
+    name: name,
     protocol: "proteus",
     qualified_users: [],
     receipt_mode: 1,
