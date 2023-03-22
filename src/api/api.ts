@@ -8,7 +8,11 @@ const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 export async function createGroupConversation(name: string) {
   let token = localStorage.getItem('token');
   let refreshToken = localStorage.getItem('refresh_token');
-  if((!token || !isTokenStillValid(token)) && isTokenStillValid(refreshToken)) {
+  if(token && !isTokenStillValid(token)) {
+    localStorage.removeItem('token');
+    token = null;
+  }
+  if(!token && isTokenStillValid(refreshToken)) {
     const newTokens = await refreshAccessToken(refreshToken);
     console.log("new tokens: ", newTokens);
     token = newTokens.access_token;
@@ -16,33 +20,37 @@ export async function createGroupConversation(name: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('refresh_token', refreshToken);
   }
-  const teamId = await getTeamId();
-  const payload = {
-    access: ["invite", "code"],
-    access_role_v2: ["guest", "non_team_member", "team_member", "service"],
-    conversation_role: "wire_member",
-    name: name,
-    protocol: "proteus",
-    qualified_users: [],
-    receipt_mode: 1,
-    team: {
-      managed: false,
-      teamid: teamId,
-    },
-    users: [],
-  };
+  if(token && isTokenStillValid(token)) {
+    const teamId = await getTeamId();
+    const payload = {
+      access: ["invite", "code"],
+      access_role_v2: ["guest", "non_team_member", "team_member", "service"],
+      conversation_role: "wire_member",
+      name: name,
+      protocol: "proteus",
+      qualified_users: [],
+      receipt_mode: 1,
+      team: {
+        managed: false,
+        teamid: teamId,
+      },
+      users: [],
+    };
 
-  // TODO: any/model
-  const response: any = await fetch(apiUrl + "/conversations", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(payload),
-  }).then((r) => r.json());
+    // TODO: any/model
+    const response: any = await fetch(apiUrl + "/conversations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    }).then((r) => r.json());
 
-  return response.id;
+    return response.id;
+  } else {
+    return null;
+  }
 }
 
 export async function createGroupLink(conversationId: string) {
