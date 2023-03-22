@@ -10,7 +10,7 @@ export async function createGroupConversation(name: string) {
     access: ["invite", "code"],
     access_role_v2: ["guest", "non_team_member", "team_member", "service"],
     conversation_role: "wire_member",
-    name: name,
+    name: name ?? "New appointment",
     protocol: "proteus",
     qualified_users: [],
     receipt_mode: 1,
@@ -56,9 +56,5 @@ export async function getTeamId() {
     },
   }).then((r) => r.json());
 
-  console.log("getTeamId:");
-  const teamId = response.team;
-  console.log("response.team:", teamId);
-
-  return teamId;
+  return response.team;
 }
