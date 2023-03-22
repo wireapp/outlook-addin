@@ -14,17 +14,24 @@ let mailboxItem;
 
 export function test() {
   const tokenExpired: boolean = true;
-  let isLoggedIn: boolean = true;
+  let isLoggedIn: boolean = false;
 
   let dialog;
 
   console.log('open dialog');
 
-  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', {width: 800, height: 600, },
-      function (asyncResult) {
-          dialog = asyncResult.value;
-          console.log(asyncResult.value);
-      }
+  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 600, width: 800 },
+    (result: Office.AsyncResult<Office.Dialog>) => {
+      const dialog = result.value;
+  
+      dialog.addEventHandler(Office.EventType.DialogMessageReceived, (args: Office.DialogParentMessageReceivedEventArgs) => {
+        const messageFromDialog = args.message;
+  
+        dialog.close();
+        console.log("messageParent:", messageFromDialog);
+        Office.context.ui.messageParent(messageFromDialog);
+      });
+    }
   );
 
   if(isLoggedIn) {
@@ -43,7 +50,6 @@ export function test() {
   //   appendToBody(mailboxItem, meetingLink);
   // });
 }
-
 
 function addMeetingLink() {
   test();
