@@ -12,17 +12,17 @@ export async function createGroupConversation(name: string) {
   if(token) {
     console.log('token exists');
   }
-  if(isTokenStillValid(token)) {
+  if(await isTokenStillValid(token)) {
     console.log('token is valid');
   } else {
     console.log('token is NOT valid');
   }
-  if(!isTokenStillValid(token)) {
+  if(!await isTokenStillValid(token)) {
     console.log('removing token as it is not valid');
     localStorage.removeItem('token');
     token = null;
   }
-  if(!token && isTokenStillValid(refreshToken)) {
+  if(!token && await isTokenStillValid(refreshToken)) {
     console.log('refreshing token');
     const newTokens = await refreshAccessToken(refreshToken);
     console.log("new tokens: ", newTokens);
@@ -31,7 +31,7 @@ export async function createGroupConversation(name: string) {
     localStorage.setItem('token', token);
     localStorage.setItem('refresh_token', refreshToken);
   }
-  if(token && isTokenStillValid(token)) {
+  if(token && await isTokenStillValid(token)) {
     console.log('token is still valid: ', token);
     const teamId = await getTeamId();
     const payload = {
