@@ -20,19 +20,18 @@ export function test() {
 
   console.log('open dialog');
 
-  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 50, width: 50 },
-    (result: Office.AsyncResult<Office.Dialog>) => {
-      const dialog = result.value;
-  
-      dialog.addEventHandler(Office.EventType.DialogMessageReceived, (args: Office.DialogParentMessageReceivedEventArgs) => {
-        const messageFromDialog = args.message;
-  
-        console.log("messageParent:", messageFromDialog);
-        Office.context.ui.messageParent(messageFromDialog);
+  Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 60, width: 40 }, (asyncResult) => {
+    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+      console.error("dialog result failed: " + asyncResult.error.message);
+    } else {
+      const dialog = asyncResult.value;
+      dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogMessageReceivedEventArgs) => {
+        const authResult = messageEvent.message as string;
+        console.log(`Auth result: ${authResult}`);
         dialog.close();
       });
     }
-  );
+  });
 
   if(isLoggedIn) {
     getSubject(mailboxItem, (subject) => {
