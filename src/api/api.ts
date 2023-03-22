@@ -2,9 +2,9 @@
 /* global global, fetch, console */
 
 const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
-const token = localStorage.getItem('token');
 
 export async function createGroupConversation(name: string) {
+  const token = localStorage.getItem('token');
   const teamId = await getTeamId();
   const payload = {
     access: ["invite", "code"],
@@ -48,6 +48,7 @@ export async function createGroupLink(conversationId: string) {
 }
 
 export async function getTeamId() {
+  const token = localStorage.getItem('token');
   const response: any = await fetch(apiUrl + `/self`, {
     method: "GET",
     headers: {
