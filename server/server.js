@@ -31,7 +31,7 @@ app.get("/oauth2callback", (req, res) => {
         console.log(result.data.access_token);
         res.send("<html><head><script src='https://appsforoffice.microsoft.com/lib/1/hosted/office.js' type='text/javascript'></script></head><body>you are authorized " + result.data.access_token +
         "<script>document.addEventListener('DOMContentLoaded', function () { localStorage.setItem('token', '" + result.data.access_token + "'); }, false);</script>" +
-        "<script>Office.initialize = () => {}; console.log('dialog Office messageParent'); Office.context.ui.messageParent('" + result.data.access_token + "');</script>" +
+        "<script>Office.onReady(function() { document.addEventListener('DOMContentLoaded', function () { console.log('dialog Office messageParent'); Office.context.ui.messageParent(JSON.stringify('" + result.data.access_token + "')); console.log('AFTER dialog Office messageParent'); }, false); });</script>" +
         "</body></html>");
       })
       .catch((err) => {

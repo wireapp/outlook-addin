@@ -26,6 +26,7 @@ export function test() {
     } else {
       const dialog = asyncResult.value;
       dialog.addEventHandler(Office.EventType.DialogMessageReceived, (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
+        console.log('DialogMessageReceived');
         const authResult = messageEvent.message as string;
         console.log(`Auth result: ${authResult}`);
         dialog.close();
