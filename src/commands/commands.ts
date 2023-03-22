@@ -12,11 +12,15 @@ Office.onReady(function () {
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
+let pendingCreateConversation = false;
+
 export function test() {
   const tokenExpired: boolean = true;
   let isLoggedIn: boolean = false;
 
   let dialog;
+
+  pendingCreateConversation = true;
 
   console.log('open dialog');
 
@@ -31,26 +35,32 @@ export function test() {
         console.log('Auth result:', authResult);
         localStorage.setItem('token', authResult.token);
         localStorage.setItem('refresh_token', authResult.refresh_token);
+
+        if(pendingCreateConversation) {
+          createGroupConversationForCurrentMeeting();
+          pendingCreateConversation = false;
+        }
+
         dialog.close();
       });
     }
   });
-
-  if(isLoggedIn) {
-    getSubject(mailboxItem, (subject) => {
-      createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
-        createGroupLink(r).then((r) => {
-          const groupLink = `<a href="${r}">${r}</a>`;
-          appendToBody(mailboxItem, groupLink);
-        });
-      });
-    });
-  }
   
   // maybe can be done better ?
   // createMeetingLinkElement().then((meetingLink) => {
   //   appendToBody(mailboxItem, meetingLink);
   // });
+}
+
+function createGroupConversationForCurrentMeeting() {
+  getSubject(mailboxItem, (subject) => {
+    createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
+      createGroupLink(r).then((r) => {
+        const groupLink = `<a href="${r}">${r}</a>`;
+        appendToBody(mailboxItem, groupLink);
+      });
+    });
+  });
 }
 
 function addMeetingLink() {
