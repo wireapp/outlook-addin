@@ -15,7 +15,6 @@ let mailboxItem;
 let pendingCreateConversation = false;
 
 export function test() {
-  const tokenExpired: boolean = true;
   let isLoggedIn: boolean = false;
 
   let dialog;
@@ -67,10 +66,12 @@ export function test() {
 function createGroupConversationForCurrentMeeting() {
   getSubject(mailboxItem, (subject) => {
     createGroupConversation(subject ? subject : defaultSubjectValue).then((r) => {
-      createGroupLink(r).then((r) => {
-        const groupLink = `<a href="${r}">${r}</a>`;
-        appendToBody(mailboxItem, groupLink);
-      });
+      if(r) {
+        createGroupLink(r).then((r) => {
+          const groupLink = `<a href="${r}">${r}</a>`;
+          appendToBody(mailboxItem, groupLink);
+        });
+      }
     });
   });
 }
