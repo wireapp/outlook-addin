@@ -74,17 +74,15 @@ export async function isTokenStillValid(token: string) {
 }
 
 export async function refreshAccessToken(refresh_token: string) {
-  const payload = {
-    refresh_token
-  };
-
+  const formBody = encodeURIComponent("refresh-token") + "=" + encodeURIComponent(refresh_token);
   const response: any = await fetch('/refreshToken/', {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify(payload),
+    body: formBody,
   }).then((r) => r.json());
 
-  return response.data;
+  return response;
 }
