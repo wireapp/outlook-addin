@@ -66,7 +66,7 @@ export function test() {
 
 function createGroupConversationForCurrentMeeting() {
   getSubject(mailboxItem, (subject) => {
-    createGroupConversation(subject?.length > 0 ? subject : defaultSubjectValue).then((r) => {
+    createGroupConversation(subject ? subject : defaultSubjectValue).then((r) => {
       createGroupLink(r).then((r) => {
         const groupLink = `<a href="${r}">${r}</a>`;
         appendToBody(mailboxItem, groupLink);
