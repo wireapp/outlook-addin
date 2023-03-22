@@ -23,9 +23,11 @@ export function test() {
   pendingCreateConversation = true;
 
   const token = localStorage.getItem('token');
+  const refreshToken = localStorage.getItem('refresh_token');
   console.log('token from local storage: ', token);
+  console.log('refresh token from local storage: ', refreshToken);
 
-  if(!token) {
+  if(!token && !refreshToken) {
     console.log('open dialog');
 
     Office.context.ui.displayDialogAsync('https://outlook.integrations.zinfra.io/login', { height: 60, width: 40 }, (asyncResult) => {
