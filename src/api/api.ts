@@ -35,6 +35,7 @@ export async function createGroupConversation(name: string) {
 }
 
 export async function createGroupLink(conversationId: string) {
+  const token = localStorage.getItem('token');
   // TODO: any/model
   const response: any = await fetch(apiUrl + `/conversations/${conversationId}/code`, {
     method: "POST",
