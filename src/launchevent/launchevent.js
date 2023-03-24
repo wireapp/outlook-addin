@@ -6,6 +6,10 @@
 // Office is ready. Init
 Office.onReady(function () {
   mailboxItem = Office.context.mailbox.item;
+
+  if (Office.context.requirements.isSetSupported('Mailbox', '1.12')) {
+    Office.actions.associate("onAppointmentSendHandler", onAppointmentSendHandler);
+  }
 });
 
 const defaultSubjectValue = "New Appointment";
@@ -55,7 +59,7 @@ function doSomething(asyncResult) {
   getSubject(mailboxItem, (subject) => {
     createGroupConversation(subject ?? defaultSubjectValue).then((r) => {
       createGroupLink(r).then((r) => {
-        const groupLink = `<a href="${r}">${r}</a>`;
+        const groupLink = `<br><br>On Appointment send<br><a href="${r}">${r}</a>`;
         appendToBody(mailboxItem, groupLink, event);
       });
     });
@@ -65,14 +69,6 @@ function doSomething(asyncResult) {
   // createMeetingLinkElement().then((meetingLink) => {
   //   appendToBody(mailboxItem, meetingLink);
   // });
-}
-
-// Register the functions.
-
-// IMPORTANT: To ensure your add-in is supported in the Outlook client on Windows, remember to map the event handler name specified in the manifest's LaunchEvent element to its JavaScript counterpart.
-// 1st parameter: FunctionName of LaunchEvent in the manifest; 2nd parameter: Its implementation in this .js file.
-if (Office.context.platform === Office.PlatformType.PC || Office.context.platform == null) {
-  Office.actions.associate("onAppointmentSendHandler", onAppointmentSendHandler);
 }
 
 // UTILS
