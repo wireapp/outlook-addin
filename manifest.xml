@@ -78,7 +78,7 @@
                     <bt:Image size="80" resid="icon-80"/>
                   </Icon>
                   <Action xsi:type="ExecuteFunction">
-                    <FunctionName>test</FunctionName>
+                    <FunctionName>addMeetingLink</FunctionName>
                   </Action>
                 </Control>
 
@@ -132,9 +132,9 @@
         <bt:Url id="JSRuntime.Url" DefaultValue="https://localhost:3000/launchevent.js" />
       </bt:Urls>
       <bt:ShortStrings>
-        <bt:String id="residDescription" DefaultValue="Wire"/>
-        <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
+        <bt:String id="residDescription" DefaultValue="Wire meeting"/>
         <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
       </bt:ShortStrings>
       <bt:LongStrings>
         <bt:String id="Commands.Tooltip" DefaultValue="Add Wire meeting to this appointment."/>
