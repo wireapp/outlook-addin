@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
-import { createGroupConversation, createGroupLink } from "../api/api";
+import { AuthResult, EventResult } from "../api/types";
 import { appendToBody, getSubject, createMeetingLinkElement, getOrganizer, setLocation } from "../utils/mailbox";
 
 // Office is ready. Init
@@ -12,43 +12,103 @@ Office.onReady(function () {
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
-let pendingCreateConversation = false;
+async function addMeetingLink() {
+  try {
+    const subject = await getMailboxItemSubject(mailboxItem);
+    const eventResult = await createEvent(subject || defaultSubjectValue);
+    if (eventResult) {
+      getOrganizer(mailboxItem, function (organizer) {
+        setLocation(mailboxItem, eventResult.link, () => {});
+        const groupLink = createMeetingLinkElement(eventResult.link, organizer);
+        appendToBody(mailboxItem, groupLink);
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-export function addMeetingLink() {
-  let isLoggedIn: boolean = false;
+async function createEvent(name: string): Promise<EventResult> {
+  try {
+    const response = await fetchWithAuthorizeDialog("/event", {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify({ name }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  let dialog;
+    if (response.ok) {
+      const result = (await response.json()) as EventResult;
+      return result;
+    } else {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
 
-  pendingCreateConversation = true;
+async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Promise<Response> {
+  try {
+    let isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
 
-  const token = localStorage.getItem("token");
-  const refreshToken = localStorage.getItem("refresh_token");
-  console.log("token from local storage: ", token);
-  console.log("refresh token from local storage: ", refreshToken);
+    if (!isLoggedIn) {
+      isLoggedIn = await authorizeDialog();
+    }
 
-  if (!token && !refreshToken) {
-    console.log("open dialog");
+    if (isLoggedIn) {
+      const response = await fetch(url, options);
 
+      if (response.status === 401) {
+        localStorage.removeItem("isLoggedIn");
+        isLoggedIn = await authorizeDialog();
+        if (isLoggedIn) {
+          return await fetch(url, options);
+        } else {
+          throw new Error("Authorization failed");
+        }
+      } else if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      return response;
+    } else {
+      throw new Error("Authorization failed");
+    }
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+function authorizeDialog(): Promise<boolean> {
+  console.log("open dialog");
+
+  return new Promise((resolve) => {
     Office.context.ui.displayDialogAsync(
-      "https://outlook.integrations.zinfra.io/login",
-      { height: 60, width: 40 },
+      "https://outlook.integrations.zinfra.io/authorize",
+      { height: 70, width: 40 },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
           console.error("dialog result failed: " + asyncResult.error.message);
+          resolve(false);
         } else {
           const dialog = asyncResult.value;
           dialog.addEventHandler(
             Office.EventType.DialogMessageReceived,
             (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
               console.log("DialogMessageReceived");
-              const authResult = JSON.parse(messageEvent.message) as any;
+              const authResult = JSON.parse(messageEvent.message) as AuthResult;
               console.log("Auth result:", authResult);
-              localStorage.setItem("token", authResult.token);
-              localStorage.setItem("refresh_token", authResult.refresh_token);
 
-              if (pendingCreateConversation) {
-                createGroupConversationForCurrentMeeting();
-                pendingCreateConversation = false;
+              if (authResult.success) {
+                localStorage.setItem("isLoggedIn", "true");
+                resolve(true);
+              } else {
+                resolve(false);
               }
 
               dialog.close();
@@ -57,26 +117,13 @@ export function addMeetingLink() {
         }
       }
     );
-  } else {
-    if (pendingCreateConversation) {
-      createGroupConversationForCurrentMeeting();
-      pendingCreateConversation = false;
-    }
-  }
+  });
 }
 
-function createGroupConversationForCurrentMeeting() {
-  getSubject(mailboxItem, (subject) => {
-    createGroupConversation(subject ? subject : defaultSubjectValue).then((r) => {
-      if (r) {
-        createGroupLink(r).then((r) => {
-          getOrganizer(mailboxItem, function (organizer) {
-            setLocation(mailboxItem, r, () => {});
-            const groupLink = createMeetingLinkElement(r, organizer);
-            appendToBody(mailboxItem, groupLink);
-          });
-        });
-      }
+async function getMailboxItemSubject(mailboxItem: any): Promise<string> {
+  return new Promise((resolve) => {
+    getSubject(mailboxItem, (result) => {
+      resolve(result);
     });
   });
 }
