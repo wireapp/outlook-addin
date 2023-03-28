@@ -55,6 +55,7 @@ export async function createEvent(name: string) {
     // TODO: any/model
     const response: any = await fetch("/event", {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
