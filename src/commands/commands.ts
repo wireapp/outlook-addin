@@ -1,7 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
-import { createGroupConversation, createGroupLink } from "../api/api";
+//import { createGroupConversation, createGroupLink } from "../api/api";
+import { createEvent } from "../api/api";
 import { appendToBody, getSubject, createMeetingLinkElement, getOrganizer, setLocation } from "../utils/mailbox";
 
 // Office is ready. Init
@@ -21,42 +22,10 @@ export function addMeetingLink() {
 
   pendingCreateConversation = true;
 
-  const token = localStorage.getItem("token");
-  const refreshToken = localStorage.getItem("refresh_token");
-  console.log("token from local storage: ", token);
-  console.log("refresh token from local storage: ", refreshToken);
+  isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
 
-  if (!token && !refreshToken) {
-    console.log("open dialog");
-
-    Office.context.ui.displayDialogAsync(
-      "https://outlook.integrations.zinfra.io/login",
-      { height: 60, width: 40 },
-      (asyncResult) => {
-        if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          console.error("dialog result failed: " + asyncResult.error.message);
-        } else {
-          const dialog = asyncResult.value;
-          dialog.addEventHandler(
-            Office.EventType.DialogMessageReceived,
-            (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
-              console.log("DialogMessageReceived");
-              const authResult = JSON.parse(messageEvent.message) as any;
-              console.log("Auth result:", authResult);
-              localStorage.setItem("token", authResult.token);
-              localStorage.setItem("refresh_token", authResult.refresh_token);
-
-              if (pendingCreateConversation) {
-                createGroupConversationForCurrentMeeting();
-                pendingCreateConversation = false;
-              }
-
-              dialog.close();
-            }
-          );
-        }
-      }
-    );
+  if (!isLoggedIn) {
+    authorizeDialog();
   } else {
     if (pendingCreateConversation) {
       createGroupConversationForCurrentMeeting();
@@ -65,16 +34,54 @@ export function addMeetingLink() {
   }
 }
 
+function authorizeDialog() {
+  let isLoggedIn : boolean = false;
+
+  console.log("open dialog");
+
+  Office.context.ui.displayDialogAsync(
+    "https://outlook.integrations.zinfra.io/authorize",
+    { height: 70, width: 40 },
+    (asyncResult) => {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("dialog result failed: " + asyncResult.error.message);
+      } else {
+        const dialog = asyncResult.value;
+        dialog.addEventHandler(
+          Office.EventType.DialogMessageReceived,
+          (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
+            console.log("DialogMessageReceived");
+            const authResult = JSON.parse(messageEvent.message) as any;
+            console.log("Auth result:", authResult);
+
+            if(authResult.success) {
+              isLoggedIn = true;
+              localStorage.setItem("isLoggedIn", String(isLoggedIn));
+            }
+
+            if (isLoggedIn && pendingCreateConversation) {
+              createGroupConversationForCurrentMeeting();
+              pendingCreateConversation = false;
+            }
+
+            dialog.close();
+          }
+        );
+      }
+    }
+  );
+
+  return isLoggedIn;
+}
+
 function createGroupConversationForCurrentMeeting() {
   getSubject(mailboxItem, (subject) => {
-    createGroupConversation(subject ? subject : defaultSubjectValue).then((r) => {
+    createEvent(subject || defaultSubjectValue).then((r) => {
       if (r) {
-        createGroupLink(r).then((r) => {
-          getOrganizer(mailboxItem, function (organizer) {
-            setLocation(mailboxItem, r, () => {});
-            const groupLink = createMeetingLinkElement(r, organizer);
-            appendToBody(mailboxItem, groupLink);
-          });
+        getOrganizer(mailboxItem, function (organizer) {
+          setLocation(mailboxItem, r.link, () => {});
+          const groupLink = createMeetingLinkElement(r.link, organizer);
+          appendToBody(mailboxItem, groupLink);
         });
       }
     });
