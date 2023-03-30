@@ -4,7 +4,7 @@
 import { AuthResult, EventResult } from "../api/types";
 import { appendToBody, getSubject, createMeetingSummary as createMeetingSummary, getOrganizer, setLocation } from "../utils/mailbox";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
-import { showNotification } from "../utils/notifications";
+import { showNotification, removeNotification } from "../utils/notifications";
 
 // Office is ready. Init
 Office.onReady(function () {
@@ -31,6 +31,7 @@ async function addMeetingLink() {
         await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
         await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
       }
+      removeNotification('adding-wire-meeting');
     } else {
       console.log('Wire meeting is already created for this Outlook meeting');
       showNotification('wire-meeting-exists', 'Wire meeting is already created for this Outlook meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
