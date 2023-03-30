@@ -6,7 +6,7 @@ export function showNotification(notificationId, message, type, icon) {
       persistent: false,
     };
   
-    Office.context.mailbox.item.notificationMessages.addAsync(notificationId, message, (result) => {
+    Office.context.mailbox.item.notificationMessages.addAsync(notificationId, notificationMessage, (result) => {
       if (result.status === Office.AsyncResultStatus.Succeeded) {
         console.log('Notification message added successfully.');
       } else {
