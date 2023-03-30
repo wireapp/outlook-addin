@@ -15,7 +15,7 @@ const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
 async function addMeetingLink() {
-  try {
+  //try {
     const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
     if(!wireId) {
       showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage, 'icon1');
@@ -33,9 +33,9 @@ async function addMeetingLink() {
         showNotification('wire-meeting-exists', 'Wire meeting is already created for this meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
       }
     }
-  } catch (error) {
-    console.error(error);
-  }
+  //} catch (error) {
+  //  console.error(error);
+  //}
 }
 
 async function createEvent(name: string): Promise<EventResult> {
