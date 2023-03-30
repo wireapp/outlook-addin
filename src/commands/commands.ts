@@ -30,10 +30,10 @@ async function addMeetingLink() {
         });
         await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
         await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
-      } else {
-        console.log('Wire meeting is already created for this Outlook meeting');
-        //showNotification('wire-meeting-exists', 'Wire meeting is already created for this Outlook meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
       }
+    } else {
+      console.log('Wire meeting is already created for this Outlook meeting');
+      //showNotification('wire-meeting-exists', 'Wire meeting is already created for this Outlook meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
     }
   //} catch (error) {
   //  console.error(error);
