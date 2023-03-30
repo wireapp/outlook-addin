@@ -1,9 +1,9 @@
-export function showNotification(key, message, type, icon = null) {
+export function showNotification(key, message, type, icon = null, persistent = null) {
     const notificationMessage = {
       type,
       icon,
       message,
-      persistent: false,
+      persistent,
     };
   
     Office.context.mailbox.item.notificationMessages.addAsync(key, notificationMessage, (result) => {
