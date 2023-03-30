@@ -18,7 +18,7 @@ async function addMeetingLink() {
   //try {
     const wireId = ""; // await getCustomPropertyAsync(mailboxItem, 'wireId');
     if(!wireId) {
-      showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage, 'icon1');
+      //showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage, 'icon1');
       const subject = await getMailboxItemSubject(mailboxItem);
       const eventResult = await createEvent(subject || defaultSubjectValue);
       if (eventResult) {
@@ -30,7 +30,7 @@ async function addMeetingLink() {
         await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
         await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
       } else {
-        showNotification('wire-meeting-exists', 'Wire meeting is already created for this meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
+        //showNotification('wire-meeting-exists', 'Wire meeting is already created for this meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
       }
     }
   //} catch (error) {
