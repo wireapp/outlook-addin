@@ -1,4 +1,4 @@
-export function showNotification(key, message, type, icon) {
+export function showNotification(key, message, type, icon = null) {
     const notificationMessage = {
       type,
       icon,
