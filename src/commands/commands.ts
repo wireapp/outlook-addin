@@ -2,7 +2,9 @@
 /* global global, Office, console */
 
 import { AuthResult, EventResult } from "../api/types";
-import { appendToBody, getSubject, createMeetingLinkElement, getOrganizer, setLocation } from "../utils/mailbox";
+import { appendToBody, getSubject, createMeetingSummary as createMeetingSummary, getOrganizer, setLocation } from "../utils/mailbox";
+import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
+import { showNotification, removeNotification } from "../utils/notifications";
 
 // Office is ready. Init
 Office.onReady(function () {
@@ -14,14 +16,25 @@ let mailboxItem;
 
 async function addMeetingLink() {
   try {
-    const subject = await getMailboxItemSubject(mailboxItem);
-    const eventResult = await createEvent(subject || defaultSubjectValue);
-    if (eventResult) {
-      getOrganizer(mailboxItem, function (organizer) {
-        setLocation(mailboxItem, eventResult.link, () => {});
-        const groupLink = createMeetingLinkElement(eventResult.link, organizer);
-        appendToBody(mailboxItem, groupLink);
-      });
+    const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
+    if(!wireId) {
+      console.log('There is no Wire meeting for this Outlook meeting, starting process of creating it...');
+      showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator);
+      const subject = await getMailboxItemSubject(mailboxItem);
+      const eventResult = await createEvent(subject || defaultSubjectValue);
+      if (eventResult) {
+        getOrganizer(mailboxItem, function (organizer) {
+          setLocation(mailboxItem, eventResult.link, () => {});
+          const meetingSummary = createMeetingSummary(eventResult.link, organizer);
+          appendToBody(mailboxItem, meetingSummary);
+        });
+        await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
+        await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
+      }
+      removeNotification('adding-wire-meeting');
+    } else {
+      console.log('Wire meeting is already created for this Outlook meeting');
+      showNotification('wire-meeting-exists', 'Wire meeting is already created for this Outlook meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage);
     }
   } catch (error) {
     console.error(error);
