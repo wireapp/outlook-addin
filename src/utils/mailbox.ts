@@ -1,6 +1,6 @@
 /* global , Office, console */
 
-export function createMeetingLinkElement(groupInviteLink, organizer) {
+export function createMeetingSummary(groupInviteLink, organizer) {
   const wireDownloadLink = "https://wire.com/en/download/";
   const addinDownloadLink = undefined;
   const fullInvite = `<div>

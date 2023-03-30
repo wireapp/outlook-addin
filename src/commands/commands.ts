@@ -2,7 +2,9 @@
 /* global global, Office, console */
 
 import { AuthResult, EventResult } from "../api/types";
-import { appendToBody, getSubject, createMeetingLinkElement, getOrganizer, setLocation } from "../utils/mailbox";
+import { appendToBody, getSubject, createMeetingSummary as createMeetingSummary, getOrganizer, setLocation } from "../utils/mailbox";
+import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
+import { showNotification } from "../utils/notifications";
 
 // Office is ready. Init
 Office.onReady(function () {
@@ -14,14 +16,22 @@ let mailboxItem;
 
 async function addMeetingLink() {
   try {
-    const subject = await getMailboxItemSubject(mailboxItem);
-    const eventResult = await createEvent(subject || defaultSubjectValue);
-    if (eventResult) {
-      getOrganizer(mailboxItem, function (organizer) {
-        setLocation(mailboxItem, eventResult.link, () => {});
-        const groupLink = createMeetingLinkElement(eventResult.link, organizer);
-        appendToBody(mailboxItem, groupLink);
-      });
+    const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
+    if(!wireId) {
+      showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage, 'icon1');
+      const subject = await getMailboxItemSubject(mailboxItem);
+      const eventResult = await createEvent(subject || defaultSubjectValue);
+      if (eventResult) {
+        getOrganizer(mailboxItem, function (organizer) {
+          setLocation(mailboxItem, eventResult.link, () => {});
+          const meetingSummary = createMeetingSummary(eventResult.link, organizer);
+          appendToBody(mailboxItem, meetingSummary);
+        });
+        await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
+        await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
+      } else {
+        showNotification('wire-meeting-exists', 'Wire meeting is already created for this meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage, 'icon1');
+      }
     }
   } catch (error) {
     console.error(error);
