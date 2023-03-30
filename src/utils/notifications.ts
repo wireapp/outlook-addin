@@ -15,7 +15,7 @@ export function showNotification(key, message, type, icon) {
     });
 }
 
-function removeNotification(key) {
+export function removeNotification(key) {
     Office.context.mailbox.item.notificationMessages.removeAsync(key, (result) => {
       if (result.status === Office.AsyncResultStatus.Succeeded) {
         console.log(`Notification with key "${key}" removed successfully.`);
