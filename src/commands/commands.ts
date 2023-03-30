@@ -16,7 +16,7 @@ let mailboxItem;
 
 async function addMeetingLink() {
   //try {
-    const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
+    const wireId = ""; // await getCustomPropertyAsync(mailboxItem, 'wireId');
     if(!wireId) {
       showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.InformationalMessage, 'icon1');
       const subject = await getMailboxItemSubject(mailboxItem);
