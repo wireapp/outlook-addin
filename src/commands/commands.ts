@@ -14,7 +14,7 @@ Office.onReady(function () {
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
-async function addMeetingLink() {
+async function addMeetingLink(event: Office.AddinCommands.Event) {
   try {
     const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
     if(!wireId) {
@@ -40,6 +40,7 @@ async function addMeetingLink() {
     console.error(error);
     showNotification('adding-wire-meeting-error', 'There was error while adding wire meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage);
   }
+  event.completed();
 }
 
 async function createEvent(name: string): Promise<EventResult> {
