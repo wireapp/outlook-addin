@@ -12,5 +12,5 @@ Office.onReady(function () {
 
 function onAppointmentSendHandler(event) {
     console.log("onAppointmentSendHandler executed");
-    event.completed();
+    event.completed({allowEvent: true});
   }
