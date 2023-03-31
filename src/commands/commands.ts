@@ -38,6 +38,7 @@ async function addMeetingLink(event: Office.AddinCommands.Event) {
     }
   } catch (error) {
     console.error(error);
+    removeNotification('adding-wire-meeting');
     showNotification('adding-wire-meeting-error', 'There was error while adding wire meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage);
   }
   event.completed();
