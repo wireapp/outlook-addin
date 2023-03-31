@@ -113,6 +113,31 @@
           </ExtensionPoint>
 
         </DesktopFormFactor>
+        
+        <MobileFormFactor>
+          <FunctionFile resid="Commands.Url"/>
+          <ExtensionPoint xsi:type="MobileOnlineMeetingCommandSurface">
+            <Control xsi:type="MobileButton" id="insertMeetingButton">
+              <Label resid="Commands.Label"/>
+              <Icon>
+                <bt:Image size="25" scale="1" resid="icon-16"/>
+                <bt:Image size="25" scale="2" resid="icon-16"/>
+                <bt:Image size="25" scale="3" resid="icon-16"/>
+
+                <bt:Image size="32" scale="1" resid="icon-32"/>
+                <bt:Image size="32" scale="2" resid="icon-32"/>
+                <bt:Image size="32" scale="3" resid="icon-32"/>
+
+                <bt:Image size="48" scale="1" resid="icon-48"/>
+                <bt:Image size="48" scale="2" resid="icon-48"/>
+                <bt:Image size="48" scale="3" resid="icon-48"/>
+              </Icon>
+              <Action xsi:type="ExecuteFunction">
+                <FunctionName>addMeetingLink</FunctionName>
+              </Action>
+            </Control>
+          </ExtensionPoint>
+        </MobileFormFactor>
       </Host>
     </Hosts>
     <Resources>
