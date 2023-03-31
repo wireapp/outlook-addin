@@ -5,4 +5,12 @@
 
 // Office is ready. Init
 Office.onReady(function () {
+    if (Office.context.requirements.isSetSupported('Mailbox', '1.12')) {
+        Office.actions.associate("onAppointmentSendHandler", onAppointmentSendHandler);
+    }
 });
+
+function onAppointmentSendHandler(event) {
+    console.log("onAppointmentSendHandler executed");
+    event.completed({allowEvent: true});
+}
