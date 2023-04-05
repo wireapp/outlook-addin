@@ -53,6 +53,7 @@ const exchangeCodeForTokens = async (code: string, codeVerifier: string): Promis
   const response = await fetch(tokenEndpoint, {
     method: 'POST',
     headers: {
+      Accept: "application/json",
       'Content-Type': 'application/x-www-form-urlencoded',
     },
     body: body.toString(),
