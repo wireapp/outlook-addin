@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
+  <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
+  <Version>0.0.5.0</Version>
+  <ProviderName>Wire</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="Wire for Outlook"/>
+  <Description DefaultValue="Wire meeting integration for Outlook"/>
+  <IconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://localhost:3000/support.html"/>
+  <AppDomains>
+    <AppDomain>https://localhost:3000</AppDomain>
+    <AppDomain>https://staging-nginz-https.zinfra.io</AppDomain>
+    <AppDomain>https://wire-webapp-edge.zinfra.io/</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+        <RequestedHeight>250</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadWriteMailbox</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
+    <Description resid="residDescription"></Description>
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.3">
+        <bt:Set Name="Mailbox"/>
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host xsi:type="MailHost">
+
+        <Runtimes>
+          <!-- HTML file including reference to or inline JavaScript event handlers.
+               This is used by Outlook on the web and on the new Mac UI. -->
+          <Runtime resid="WebViewRuntime.Url">
+            <!-- JavaScript file containing event handlers. This is used by Outlook on Windows. -->
+            <Override type="javascript" resid="JSRuntime.Url"/>
+          </Runtime>
+        </Runtimes>
+
+        <DesktopFormFactor>
+          <FunctionFile resid="Commands.Url"/>
+          <ExtensionPoint xsi:type="AppointmentOrganizerCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="apptComposeGroup">
+                <Label resid="residDescription"/>
+
+                <!-- Add Button -->
+                <Control xsi:type="Button" id="insertMeetingButton">
+                  <Label resid="Commands.Label"/>
+                  <Supertip>
+                    <Title resid="Commands.Label"/>
+                    <Description resid="Commands.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="64" resid="icon-64"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ExecuteFunction">
+                    <FunctionName>addMeetingLink</FunctionName>
+                  </Action>
+                </Control>
+
+                <!-- Link to settings -->
+                <Control xsi:type="Button" id="settingsButton">
+                  <Label resid="TaskpaneButton.Label"/>
+                  <Supertip>
+                    <Title resid="TaskpaneButton.Label"/>
+                    <Description resid="TaskpaneButton.Tooltip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icon-16"/>
+                    <bt:Image size="32" resid="icon-32"/>
+                    <bt:Image size="80" resid="icon-80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="Taskpane.Url"/>
+                  </Action>
+                </Control>
+
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+
+          <!-- Enable launching the add-in on the included event. -->
+          <ExtensionPoint xsi:type="LaunchEvent">
+            <LaunchEvents>
+              <LaunchEvent Type="OnAppointmentSend" FunctionName="onAppointmentSendHandler" SendMode="PromptUser" />
+            </LaunchEvents>
+            <!-- Identifies the runtime to be used (also referenced by the Runtime element). -->
+            <SourceLocation resid="WebViewRuntime.Url"/>
+          </ExtensionPoint>
+
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icon-16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
+        <bt:Image id="icon-48" DefaultValue="https://localhost:3000/assets/icon-48.png"/>
+        <bt:Image id="icon-64" DefaultValue="https://localhost:3000/assets/icon-64.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <!-- Entry for event based activation. -->
+        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://localhost:3000/commands.html" />
+        <!-- Entry needed for Outlook on Windows. -->
+        <bt:Url id="JSRuntime.Url" DefaultValue="https://localhost:3000/launchevent.js" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="residDescription" DefaultValue="Wire meeting"/>
+        <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link"/>
+        <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="Commands.Tooltip" DefaultValue="Add Wire meeting to this appointment."/>
+        <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
+      </bt:LongStrings>
+    </Resources>
+    <!-- Configure the prepend-on-send or append-on-send feature using the AppendOnSend value. -->
+    <ExtendedPermissions>
+      <ExtendedPermission>AppendOnSend</ExtendedPermission>
+    </ExtendedPermissions>
+  </VersionOverrides>
+</VersionOverrides>
+</OfficeApp>
