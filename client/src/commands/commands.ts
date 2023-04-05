@@ -113,8 +113,10 @@ async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Prom
 
     if (isLoggedIn) {
       const token = localStorage.getItem('access_token');
-      options.headers = { ...options.headers, 
-                          Authorization: `Bearer {$token}`};
+      options.headers = {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      };
 
       const response = await fetch(url, options);
 
