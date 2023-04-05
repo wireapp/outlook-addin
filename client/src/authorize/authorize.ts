@@ -32,19 +32,11 @@ const redirectToAuthorize = async () => {
 };
 
 const generateRandomState = async (): Promise<string> => {
-  const array = new Uint32Array(8);
-  window.crypto.getRandomValues(array);
-
-  const state = Array.from(array, (value) => value.toString(36)).join('');
-  return state;
+  return generateRandomHexString(16);
 };
 
 const generateCodeVerifier = async (): Promise<string> => {
-  const array = new Uint32Array(32);
-  window.crypto.getRandomValues(array);
-
-  const verifier = Array.from(array, (value) => value.toString(36)).join('');
-  return verifier;
+  return generateRandomHexString(64);
 };
 
 const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
@@ -56,4 +48,14 @@ const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
     .replace(/=+$/, '');
 
   return base64Url;
+};
+
+const generateRandomHexString = (length) => {
+  const dec2hex = (dec) => {
+    return dec.toString(16).padStart(2, "0");
+  };
+
+  const arr = new Uint8Array(Math.ceil(length / 2));
+  window.crypto.getRandomValues(arr);
+  return Array.from(arr, dec2hex).join('').slice(0, length);
 };
