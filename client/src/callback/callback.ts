@@ -67,7 +67,7 @@ const exchangeCodeForTokens = async (code: string, codeVerifier: string): Promis
     const { access_token, refresh_token } = json;
 
     console.log('access_token: ', access_token);
-    console.log('access_token: ', refresh_token);
+    console.log('refresh_token: ', refresh_token);
 
     return { success: true, access_token, refresh_token};
   } else {
