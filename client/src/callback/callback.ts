@@ -1,7 +1,8 @@
 /* global global, Office, self, window */
-import {AuthResult} from '../types/types'
+import { AuthResult } from '../types/types'
 
 document.addEventListener('DOMContentLoaded', async function () {
+  console.log('BEFORE handling callback');
   await handleCallback();
 }, false);
 
@@ -12,6 +13,11 @@ const handleCallback = async (): Promise<void> => {
   const storedCodeVerifier = localStorage.getItem('code_verifier');
   const storedState = localStorage.getItem('state');
 
+  console.log('handleCallback');
+  console.log('code: ', code);
+  console.log('receivedState: ', receivedState);
+  console.log('storedCodeVerifier: ', storedCodeVerifier);
+  console.log('storedState: ', storedState);
   if (code && receivedState && storedCodeVerifier) {
     if (receivedState !== storedState) {
       console.error('State validation failed');
@@ -21,6 +27,8 @@ const handleCallback = async (): Promise<void> => {
     try {
       const authResult = await exchangeCodeForTokens(code, storedCodeVerifier);
 
+      console.log('authResult: ', authResult);
+        
       Office.onReady(() => {
         Office.context.ui.messageParent(JSON.stringify(authResult));
       });
@@ -50,9 +58,16 @@ const exchangeCodeForTokens = async (code: string, codeVerifier: string): Promis
     body: body.toString(),
   });
 
+  console.log('body.toString(): ', body.toString());
+
+  console.log('response: ', response);
+
   if (response.ok) {
     const json = await response.json();
     const { access_token, refresh_token } = json;
+
+    console.log('access_token: ', access_token);
+    console.log('access_token: ', refresh_token);
 
     return { success: true, access_token, refresh_token};
   } else {
