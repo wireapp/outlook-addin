@@ -14,6 +14,9 @@ const redirectToAuthorize = async () => {
   const codeChallengeMethod = 'S256';
   const codeVerifier = await generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);
+  
+  sessionStorage.setItem('state', state);
+  sessionStorage.setItem('code_verifier', codeVerifier);
 
   const url = new URL('https://wire-webapp-edge.zinfra.io/auth');
   url.searchParams.append('client_id', clientId);
@@ -23,9 +26,7 @@ const redirectToAuthorize = async () => {
   url.searchParams.append('scope', scope);
   url.searchParams.append('code_challenge_method', codeChallengeMethod);
   url.searchParams.append('code_challenge', codeChallenge);
-
-  sessionStorage.setItem('state', state);
-  sessionStorage.setItem('code_verifier', codeVerifier);
+  url.hash = 'authorize';
 
   window.location.href = url.href;
 };
