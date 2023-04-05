@@ -10,8 +10,8 @@ const handleCallback = async (): Promise<void> => {
   const urlParams = new URLSearchParams(window.location.search);
   const code = urlParams.get('code');
   const receivedState = urlParams.get('state');
-  const storedCodeVerifier = localStorage.getItem('code_verifier');
-  const storedState = localStorage.getItem('state');
+  const storedCodeVerifier = sessionStorage.getItem('code_verifier');
+  const storedState = sessionStorage.getItem('state');
 
   console.log('handleCallback');
   console.log('code: ', code);
