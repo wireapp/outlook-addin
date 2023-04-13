@@ -4,7 +4,7 @@
   <Version>0.0.5.1</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Wire for Outlook"/>
+  <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
   <IconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-128.png"/>
@@ -156,7 +156,7 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire meeting"/>
-        <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link (client only)"/>
+        <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
       </bt:ShortStrings>
       <bt:LongStrings>
