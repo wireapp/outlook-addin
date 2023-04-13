@@ -26,7 +26,8 @@ module.exports = async (env, options) => {
       callback: "./src/callback/callback.ts",
     },
     output: {
-      clean: true,
+      path: path.resolve(__dirname, "dist"),
+      filename: "[name].js",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
