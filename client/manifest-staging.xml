@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
-  <Version>0.0.5.1</Version>
+  <Version>0.0.5.5</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Wire for Outlook"/>
+  <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
   <IconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-128.png"/>
@@ -102,13 +102,13 @@
           </ExtensionPoint>
 
           <!-- Enable launching the add-in on the included event. -->
-          <ExtensionPoint xsi:type="LaunchEvent">
+          <!-- <ExtensionPoint xsi:type="LaunchEvent">
             <LaunchEvents>
               <LaunchEvent Type="OnAppointmentSend" FunctionName="onAppointmentSendHandler" SendMode="PromptUser" />
-            </LaunchEvents>
+            </LaunchEvents> -->
             <!-- Identifies the runtime to be used (also referenced by the Runtime element). -->
-            <SourceLocation resid="WebViewRuntime.Url"/>
-          </ExtensionPoint>
+            <!-- <SourceLocation resid="WebViewRuntime.Url"/>
+          </ExtensionPoint> -->
 
         </DesktopFormFactor>
         
@@ -156,7 +156,7 @@
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire meeting"/>
-        <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link (client only)"/>
+        <bt:String id="Commands.Label" DefaultValue="Add Wire meeting link"/>
         <bt:String id="TaskpaneButton.Label" DefaultValue="Settings"/>
       </bt:ShortStrings>
       <bt:LongStrings>

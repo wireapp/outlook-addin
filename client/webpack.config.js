@@ -4,6 +4,7 @@ const devCerts = require("office-addin-dev-certs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const path = require("path");
 
 const urlDev = "https://localhost:3000/";
 const urlStaging = "https://outlook.integrations.zinfra.io/client/";
@@ -26,7 +27,8 @@ module.exports = async (env, options) => {
       callback: "./src/callback/callback.ts",
     },
     output: {
-      clean: true,
+      path: path.resolve(__dirname, "dist"),
+      filename: "[name].js",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
@@ -65,6 +67,11 @@ module.exports = async (env, options) => {
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
+          {
+            // for event-based-activation
+            from: "./src/launchevent/launchevent.js",
+            to: "launchevent.js",
+          },
           {
             from: "assets/*",
             to: "assets/[name][ext][query]",
