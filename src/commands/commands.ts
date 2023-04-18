@@ -1,15 +1,25 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT license.
+ * See LICENSE in the project root for license information.
+ */
+
+/* global global, Office, self, window */
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
-import { AuthResult, EventResult } from "../api/types";
+import { AuthResult, EventResult } from "../types/types";
 import { appendToBody, getSubject, createMeetingSummary as createMeetingSummary, getOrganizer, setLocation } from "../utils/mailbox";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
 import { showNotification, removeNotification } from "../utils/notifications";
+import jwt_decode from "jwt-decode";
 
 // Office is ready. Init
 Office.onReady(function () {
   mailboxItem = Office.context.mailbox.item;
 });
+
+const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
 
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
@@ -46,18 +56,44 @@ async function addMeetingLink(event: Office.AddinCommands.Event) {
 
 async function createEvent(name: string): Promise<EventResult> {
   try {
-    const response = await fetchWithAuthorizeDialog("/event", {
-      method: "POST",
-      credentials: "include",
-      body: JSON.stringify({ name }),
-      headers: {
-        "Content-Type": "application/json",
+    const teamId = await getTeamId();
+    
+    const payload = {
+      access: ["invite", "code"],
+      access_role_v2: ["guest", "non_team_member", "team_member", "service"],
+      conversation_role: "wire_member",
+      name: name,
+      protocol: "proteus",
+      qualified_users: [],
+      receipt_mode: 1,
+      team: {
+        managed: false,
+        teamid: teamId,
       },
+      users: [],
+    };
+
+    // TODO: any/model
+    const response: any = await fetchWithAuthorizeDialog(apiUrl + "/conversations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload),
     });
 
     if (response.ok) {
-      const result = (await response.json()) as EventResult;
-      return result;
+      const conversationId = (await response.json()).id;
+      console.log('conversationId: ', conversationId);
+
+      const responseLink: any = await fetchWithAuthorizeDialog(apiUrl + `/conversations/${conversationId}/code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      }).then((r) => r.json());
+
+      return { id: conversationId, link: responseLink.data.uri};
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }
@@ -69,19 +105,37 @@ async function createEvent(name: string): Promise<EventResult> {
 
 async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Promise<Response> {
   try {
-    let isLoggedIn = JSON.parse(localStorage.getItem("isLoggedIn"));
+    let isLoggedIn = !!localStorage.getItem('refresh_token');
 
     if (!isLoggedIn) {
       isLoggedIn = await authorizeDialog();
     }
 
     if (isLoggedIn) {
+      const token = localStorage.getItem('access_token');
+      options.headers = {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      };
+
       const response = await fetch(url, options);
 
       if (response.status === 401) {
-        localStorage.removeItem("isLoggedIn");
-        isLoggedIn = await authorizeDialog();
+        isLoggedIn = await refreshTokenExchange();
+
+        if (!isLoggedIn) {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('refresh_token');
+
+          isLoggedIn = await authorizeDialog();
+        }
+
         if (isLoggedIn) {
+          const token = localStorage.getItem('access_token');
+          options.headers = {
+            ...options.headers,
+            Authorization: `Bearer ${token}`,
+          };
           return await fetch(url, options);
         } else {
           throw new Error("Authorization failed");
@@ -100,12 +154,52 @@ async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Prom
   }
 }
 
+const refreshTokenExchange = async (): Promise<boolean> => {
+  const refreshToken = localStorage.getItem('refresh_token');
+  const tokenEndpoint = 'https://staging-nginz-https.zinfra.io/oauth/token';
+  const clientId = '3af4a9c5-4ae3-42f9-a168-981bbca4c56f';
+
+  if (!refreshToken) {
+    return false;
+  }
+
+  const body = new URLSearchParams();
+  body.append('grant_type', 'refresh_token');
+  body.append('client_id', clientId);
+  body.append('refresh_token', refreshToken);
+
+  try {
+    const response = await fetch(tokenEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: body.toString(),
+    });
+
+    if (response.ok) {
+      const json = await response.json();
+      const { access_token, refresh_token } = json;
+
+      localStorage.setItem('access_token', access_token);
+      localStorage.setItem('refresh_token', refresh_token);
+
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Error during refresh token exchange:', error);
+    return false;
+  }
+};
+
 function authorizeDialog(): Promise<boolean> {
   console.log("open dialog");
 
   return new Promise((resolve) => {
     Office.context.ui.displayDialogAsync(
-      "https://outlook.integrations.zinfra.io/authorize",
+      "https://outlook.integrations.zinfra.io/client/authorize.html",
       { height: 70, width: 40 },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
@@ -122,8 +216,13 @@ function authorizeDialog(): Promise<boolean> {
 
               if (authResult.success) {
                 localStorage.setItem("isLoggedIn", "true");
+                localStorage.setItem("access_token", authResult.access_token);
+                localStorage.setItem("refresh_token", authResult.refresh_token);
                 resolve(true);
               } else {
+                localStorage.removeItem("isLoggedIn");
+                localStorage.removeItem("access_token");
+                localStorage.removeItem("refresh_token");
                 resolve(false);
               }
 
@@ -144,12 +243,31 @@ async function getMailboxItemSubject(mailboxItem: any): Promise<string> {
   });
 }
 
-function test() {
-  // test some code here with the test button in UI
+export async function isTokenStillValid(token: string) {
+  if(token) {
+    const decodedToken = jwt_decode(token) as any;
+    console.log('isTokenStillValid for:');
+    console.log(token);
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+    console.log(decodedToken.exp * 1000 > currentTime);
+    return decodedToken.exp * 1000 > currentTime;
+  } 
+  
+  return false;
 }
+
+async function getTeamId() {
+  const response: any = await fetchWithAuthorizeDialog(apiUrl + `/self`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    },
+  }).then((r) => r.json());
+
+  return response.team;
+}
+
 
 // Register the functions.
 Office.actions.associate("addMeetingLink", addMeetingLink);
-
-// TODO: remove after DEV is complete
-Office.actions.associate("test", test);

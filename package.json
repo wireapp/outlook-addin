@@ -1,6 +1,6 @@
 {
-  "name": "office-addin-taskpane-react",
-  "version": "0.0.1",
+  "name": "wire-for-outlook-clientonly",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/OfficeDev/Office-Addin-TaskPane-React.git"
@@ -28,6 +28,7 @@
   "dependencies": {
     "@fluentui/react": "^8.52.3",
     "core-js": "^3.9.1",
+    "crypto-js": "^4.1.1",
     "es6-promise": "^4.2.8",
     "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@babel/preset-typescript": "^7.13.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/office-js": "^1.0.256",
     "@types/office-runtime": "^1.0.23",
     "@types/react": "^17.0.39",

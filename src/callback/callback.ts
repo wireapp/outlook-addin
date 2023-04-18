@@ -59,17 +59,9 @@ const exchangeCodeForTokens = async (code: string, codeVerifier: string): Promis
     body: body.toString(),
   });
 
-  console.log('body.toString(): ', body.toString());
-
-  console.log('response: ', response);
-
   if (response.ok) {
     const json = await response.json();
     const { access_token, refresh_token } = json;
-
-    console.log('access_token: ', access_token);
-    console.log('refresh_token: ', refresh_token);
-
     return { success: true, access_token, refresh_token};
   } else {
     throw new Error('Failed to exchange authorization code for tokens');

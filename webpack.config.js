@@ -7,7 +7,7 @@ const webpack = require("webpack");
 const path = require("path");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://outlook.integrations.zinfra.io"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const urlStaging = "https://outlook.integrations.zinfra.io/";
 
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
@@ -22,7 +22,9 @@ module.exports = async (env, options) => {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
       vendor: ["react", "react-dom", "core-js", "@fluentui/react"],
       taskpane: ["react-hot-loader/patch", "./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
-      commands: ["./src/commands/commands.ts", "./src/commands/commands.html"],
+      commands: "./src/commands/commands.ts",
+      authorize: "./src/authorize/authorize.ts",
+      callback: "./src/callback/callback.ts",
     },
     output: {
       path: path.resolve(__dirname, "dist"),
@@ -81,7 +83,7 @@ module.exports = async (env, options) => {
               if (dev) {
                 return content;
               } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
+                return content.toString().replace(new RegExp(urlDev, "g"), urlStaging);
               }
             },
           },
@@ -96,6 +98,16 @@ module.exports = async (env, options) => {
         filename: "commands.html",
         template: "./src/commands/commands.html",
         chunks: ["commands"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "authorize.html",
+        template: "./src/authorize/authorize.html",
+        chunks: ["authorize"],
+      }),
+      new HtmlWebpackPlugin({
+        filename: "callback.html",
+        template: "./src/callback/callback.html",
+        chunks: ["callback"],
       }),
       new webpack.ProvidePlugin({
         Promise: ["es6-promise", "Promise"],
