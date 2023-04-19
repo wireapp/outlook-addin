@@ -2,6 +2,7 @@
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const dotenv = require("dotenv");
@@ -32,21 +33,35 @@ const plugins = [
     filename: "taskpane.html",
     template: "./src/taskpane/taskpane.html",
     chunks: ["taskpane", "vendor", "polyfills"],
+    scriptLoading: "blocking",
+    inject: "head",
   }),
   new HtmlWebpackPlugin({
     filename: "commands.html",
     template: "./src/commands/commands.html",
     chunks: ["commands"],
+    scriptLoading: "blocking",
+    inject: "head",
   }),
   new HtmlWebpackPlugin({
     filename: "authorize.html",
     template: "./src/authorize/authorize.html",
     chunks: ["authorize"],
+    scriptLoading: "blocking",
+    inject: "head",
   }),
   new HtmlWebpackPlugin({
     filename: "callback.html",
     template: "./src/callback/callback.html",
     chunks: ["callback"],
+    scriptLoading: "blocking",
+    inject: "head",
+  }),
+  new HtmlWebpackTagsPlugin({
+    tags: ["config.js"],
+    append: false,
+    publicPath: false,
+    position: "head",
   }),
   new webpack.ProvidePlugin({
     Promise: ["es6-promise", "Promise"],
@@ -92,11 +107,11 @@ const pluginsDocker = [
     patterns: [
       {
         from: "./manifest.template.xml",
-        to: "dist/manifest.xml",
+        to: "manifest.xml",
       },
       {
         from: "./src/config.template.js",
-        to: "dist/config.js",
+        to: "config.js",
       },
     ],
   }),
@@ -128,10 +143,6 @@ module.exports = async (env, options) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
-    },
-    externals: {
-      "../config": "config",
-      "../launchevent/launchevent": "launchevent",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
