@@ -1,6 +1,7 @@
 FROM node as build
 WORKDIR /app
 COPY ./package.json ./package-lock.json /app/
+COPY ./src/config.template.js /app/config.js
 RUN npm ci
 COPY . /app
 RUN npm run build
