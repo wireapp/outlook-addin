@@ -3,12 +3,12 @@ WORKDIR /app
 COPY ./package.json ./package-lock.json /app/
 RUN npm ci
 COPY . /app
-COPY ./src/config.template.js /app/src/config.js
+COPY ./src/config.js.template /app/src/config.js
 RUN npm run build
 
 FROM nginx:latest
 COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.template.conf /etc/nginx/conf.d/default.template.conf
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf.template
 COPY entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
