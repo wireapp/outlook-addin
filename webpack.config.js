@@ -131,7 +131,6 @@ module.exports = async (env, options) => {
     },
     externals: {
       "../config": "config",
-      "../config.template": "config.template",
       "../launchevent/launchevent": "launchevent",
     },
     resolve: {
@@ -169,9 +168,9 @@ module.exports = async (env, options) => {
       ],
     },
     plugins: [
-      ...plugins,
       ...(isDevelopmentMode ? [new webpack.DefinePlugin(envKeys)] : []),
       ...(isDevelopmentMode ? pluginsDev : pluginsDocker),
+      ...plugins,
     ],
     devServer: {
       hot: true,
