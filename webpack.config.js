@@ -1,28 +1,113 @@
 /* eslint-disable no-undef */
 
-const devCerts = require("office-addin-dev-certs");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
+const dotenv = require("dotenv");
 
-const urlDev = "https://localhost:3000/";
-const urlProd = "https://outlook.integrations.zinfra.io"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const plugins = [
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        // for event-based-activation
+        from: "./src/launchevent/launchevent.js",
+        to: "launchevent.js",
+      },
+      {
+        from: "assets/*",
+        to: "assets/[name][ext][query]",
+      },
+      {
+        from: "./src/config.template.js",
+        to: "config.template.js",
+      },
+      {
+        from: "./manifest.template.xml",
+        to: "manifest.template.xml",
+      },
+    ],
+  }),
+  new HtmlWebpackPlugin({
+    filename: "taskpane.html",
+    template: "./src/taskpane/taskpane.html",
+    chunks: ["taskpane", "vendor", "polyfills"],
+  }),
+  new HtmlWebpackPlugin({
+    filename: "commands.html",
+    template: "./src/commands/commands.html",
+    chunks: ["commands"],
+  }),
+  new HtmlWebpackPlugin({
+    filename: "authorize.html",
+    template: "./src/authorize/authorize.html",
+    chunks: ["authorize"],
+  }),
+  new HtmlWebpackPlugin({
+    filename: "callback.html",
+    template: "./src/callback/callback.html",
+    chunks: ["callback"],
+  }),
+  new webpack.ProvidePlugin({
+    Promise: ["es6-promise", "Promise"],
+  }),
+];
 
-async function getHttpsOptions() {
-  const httpsOptions = await devCerts.getHttpsServerOptions();
-  return { ca: httpsOptions.ca, key: httpsOptions.key, cert: httpsOptions.cert };
+function replaceEnvPlaceholders(content, outputPath) {
+  if (outputPath.endsWith(".xml") || outputPath.endsWith(".js")) {
+    return content
+      .toString()
+      .replace(/\${ADDIN_HOST}/g, process.env.ADDIN_HOST + (process.env.ADDIN_PORT ? ":" + process.env.ADDIN_PORT : ""))
+      .replace(/\${API_HOST}/g, process.env.API_HOST)
+      .replace(/\${AUTHORIZE_HOST}/g, process.env.AUTHORIZE_HOST)
+      .replace(/\${CLIENT_ID}/g, process.env.CLIENT_ID);
+  }
+
+  return content;
 }
 
+const pluginsDev = [
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: "./manifest.template.xml",
+        to: "manifest.xml",
+        transform(content, path) {
+          return replaceEnvPlaceholders(content, path);
+        },
+      },
+      {
+        from: "./src/config.template.js",
+        to: "config.js",
+        transform(content, path) {
+          return replaceEnvPlaceholders(content, path);
+        },
+      },
+    ],
+  }),
+];
+
 module.exports = async (env, options) => {
-  const dev = options.mode === "development";
+  const isDevelopmentMode = options.mode === "development";
+
+  console.log("Options: ", options);
+
+  const envVars = dotenv.config().parsed;
+  const envKeys = Object.keys(envVars).reduce((prev, next) => {
+    prev[`process.env.${next}`] = JSON.stringify(envVars[next]);
+    return prev;
+  }, {});
+
   const config = {
+    mode: options.mode,
     devtool: "source-map",
     entry: {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
       vendor: ["react", "react-dom", "core-js", "@fluentui/react"],
       taskpane: ["react-hot-loader/patch", "./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
-      commands: ["./src/commands/commands.ts", "./src/commands/commands.html"],
+      commands: "./src/commands/commands.ts",
+      authorize: "./src/authorize/authorize.ts",
+      callback: "./src/callback/callback.ts",
     },
     output: {
       path: path.resolve(__dirname, "dist"),
@@ -63,43 +148,9 @@ module.exports = async (env, options) => {
       ],
     },
     plugins: [
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            // for event-based-activation
-            from: "./src/launchevent/launchevent.js",
-            to: "launchevent.js",
-          },
-          {
-            from: "assets/*",
-            to: "assets/[name][ext][query]",
-          },
-          {
-            from: "manifest*.xml",
-            to: "[name]" + "[ext]",
-            transform(content) {
-              if (dev) {
-                return content;
-              } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
-              }
-            },
-          },
-        ],
-      }),
-      new HtmlWebpackPlugin({
-        filename: "taskpane.html",
-        template: "./src/taskpane/taskpane.html",
-        chunks: ["taskpane", "vendor", "polyfills"],
-      }),
-      new HtmlWebpackPlugin({
-        filename: "commands.html",
-        template: "./src/commands/commands.html",
-        chunks: ["commands"],
-      }),
-      new webpack.ProvidePlugin({
-        Promise: ["es6-promise", "Promise"],
-      }),
+      ...plugins,
+      ...(isDevelopmentMode ? [new webpack.DefinePlugin(envKeys)] : []),
+      ...(isDevelopmentMode ? pluginsDev : []),
     ],
     devServer: {
       hot: true,
@@ -108,8 +159,9 @@ module.exports = async (env, options) => {
       },
       server: {
         type: "https",
-        options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions(),
+        options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : undefined,
       },
+      host: process.env.ADDIN_HOST,
       port: process.env.npm_package_config_dev_server_port || 3000,
     },
   };
