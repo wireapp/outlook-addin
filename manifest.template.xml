@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
-  <Id>50f26199-0857-4cf7-a298-07e934afdedb</Id>
-  <Version>1.0.0.0</Version>
+  <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
+  <Version>0.0.6.0</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
-  <Description DefaultValue="Wire integration for outlook."/>
-  <IconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-  <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://localhost:3000/support.html"/>
+  <Description DefaultValue="Wire meeting integration for Outlook"/>
+  <IconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://${ADDIN_HOST}/support.html"/>
   <AppDomains>
-  <!-- This is needed to avoid CORS, outlook side -->
-    <AppDomain>https://localhost:3000</AppDomain>
-    <AppDomain>https://app.wire.com</AppDomain>
-    <AppDomain>https://staging-nginz-https.zinfra.io</AppDomain>
-    <AppDomain>https://wire-webapp-edge.zinfra.io/</AppDomain>
+    <AppDomain>${AUTHORIZE_HOST}</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -27,7 +23,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://localhost:3000/taskpane.html"/>
+        <SourceLocation DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -41,8 +37,8 @@
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides/1.1" xsi:type="VersionOverridesV1_1">
     <Description resid="residDescription"></Description>
     <Requirements>
-      <bt:Sets>
-        <bt:Set Name="Mailbox" MinVersion="1.3"/>
+      <bt:Sets DefaultMinVersion="1.3">
+        <bt:Set Name="Mailbox"/>
       </bt:Sets>
     </Requirements>
     <Hosts>
@@ -113,23 +109,48 @@
           </ExtensionPoint>
 
         </DesktopFormFactor>
+        
+        <MobileFormFactor>
+          <FunctionFile resid="Commands.Url"/>
+          <ExtensionPoint xsi:type="MobileOnlineMeetingCommandSurface">
+            <Control xsi:type="MobileButton" id="insertMeetingButton">
+              <Label resid="Commands.Label"/>
+              <Icon>
+                <bt:Image size="25" scale="1" resid="icon-16"/>
+                <bt:Image size="25" scale="2" resid="icon-16"/>
+                <bt:Image size="25" scale="3" resid="icon-16"/>
+
+                <bt:Image size="32" scale="1" resid="icon-32"/>
+                <bt:Image size="32" scale="2" resid="icon-32"/>
+                <bt:Image size="32" scale="3" resid="icon-32"/>
+
+                <bt:Image size="48" scale="1" resid="icon-48"/>
+                <bt:Image size="48" scale="2" resid="icon-48"/>
+                <bt:Image size="48" scale="3" resid="icon-48"/>
+              </Icon>
+              <Action xsi:type="ExecuteFunction">
+                <FunctionName>addMeetingLink</FunctionName>
+              </Action>
+            </Control>
+          </ExtensionPoint>
+        </MobileFormFactor>
       </Host>
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="icon-16" DefaultValue="https://localhost:3000/assets/icon-16.png"/>
-        <bt:Image id="icon-32" DefaultValue="https://localhost:3000/assets/icon-32.png"/>
-        <bt:Image id="icon-48" DefaultValue="https://localhost:3000/assets/icon-48.png"/>
-        <bt:Image id="icon-64" DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-        <bt:Image id="icon-80" DefaultValue="https://localhost:3000/assets/icon-80.png"/>
+        <bt:Image id="icon-16" DefaultValue="https://${ADDIN_HOST}/assets/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://${ADDIN_HOST}/assets/icon-32.png"/>
+        <bt:Image id="icon-48" DefaultValue="https://${ADDIN_HOST}/assets/icon-48.png"/>
+        <bt:Image id="icon-64" DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://${ADDIN_HOST}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://localhost:3000/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:3000/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://${ADDIN_HOST}/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
         <!-- Entry for event based activation. -->
-        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://localhost:3000/commands.html" />
+        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://${ADDIN_HOST}/commands.html" />
         <!-- Entry needed for Outlook on Windows. -->
-        <bt:Url id="JSRuntime.Url" DefaultValue="https://localhost:3000/launchevent.js" />
+        <bt:Url id="JSRuntime.Url" DefaultValue="https://${ADDIN_HOST}/launchevent.js" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire meeting"/>
