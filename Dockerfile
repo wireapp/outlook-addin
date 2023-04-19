@@ -3,7 +3,6 @@ WORKDIR /app
 COPY ./package.json ./package-lock.json /app/
 RUN npm ci
 COPY . /app
-COPY ./src/config.template.js /app/src/config.js
 RUN npm run build
 
 FROM nginx:latest

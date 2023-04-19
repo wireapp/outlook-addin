@@ -92,11 +92,11 @@ const pluginsDocker = [
     patterns: [
       {
         from: "./manifest.template.xml",
-        to: "manifest.xml",
+        to: "dist/manifest.xml",
       },
       {
         from: "./src/config.template.js",
-        to: "config.js",
+        to: "dist/config.js",
       },
     ],
   }),
@@ -130,8 +130,9 @@ module.exports = async (env, options) => {
       filename: "[name].js",
     },
     externals: {
-      "./config": "config",
-      "./launchevent": "launchevent",
+      "../config": "config",
+      "../config.template": "config.template",
+      "../launchevent/launchevent": "launchevent",
     },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
