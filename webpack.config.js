@@ -90,13 +90,14 @@ const pluginsDev = [
 module.exports = async (env, options) => {
   const isDevelopmentMode = options.mode === "development";
 
-  console.log("Options: ", options);
-
-  const envVars = dotenv.config().parsed;
-  const envKeys = Object.keys(envVars).reduce((prev, next) => {
-    prev[`process.env.${next}`] = JSON.stringify(envVars[next]);
-    return prev;
-  }, {});
+  let envKeys;
+  if (isDevelopmentMode) {
+    const envVars = dotenv.config().parsed;
+    envKeys = Object.keys(envVars).reduce((prev, next) => {
+      prev[`process.env.${next}`] = JSON.stringify(envVars[next]);
+      return prev;
+    }, {});
+  }
 
   const config = {
     mode: options.mode,
