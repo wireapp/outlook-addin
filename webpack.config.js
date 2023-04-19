@@ -87,6 +87,21 @@ const pluginsDev = [
   }),
 ];
 
+const pluginsDocker = [
+  new CopyWebpackPlugin({
+    patterns: [
+      {
+        from: "./manifest.template.xml",
+        to: "manifest.xml",
+      },
+      {
+        from: "./src/config.template.js",
+        to: "config.js",
+      },
+    ],
+  }),
+];
+
 module.exports = async (env, options) => {
   const isDevelopmentMode = options.mode === "development";
 
@@ -155,7 +170,7 @@ module.exports = async (env, options) => {
     plugins: [
       ...plugins,
       ...(isDevelopmentMode ? [new webpack.DefinePlugin(envKeys)] : []),
-      ...(isDevelopmentMode ? pluginsDev : []),
+      ...(isDevelopmentMode ? pluginsDev : pluginsDocker),
     ],
     devServer: {
       hot: true,
