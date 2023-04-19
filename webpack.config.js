@@ -20,12 +20,12 @@ const plugins = [
         to: "assets/[name][ext][query]",
       },
       {
-        from: "./src/config.template.js",
-        to: "config.template.js",
+        from: "./src/config.js.template",
+        to: "config.js.template",
       },
       {
-        from: "./manifest.template.xml",
-        to: "manifest.template.xml",
+        from: "./manifest.xml.template",
+        to: "manifest.xml.template",
       },
     ],
   }),
@@ -85,14 +85,14 @@ const pluginsDev = [
   new CopyWebpackPlugin({
     patterns: [
       {
-        from: "./manifest.template.xml",
+        from: "./manifest.xml.template",
         to: "manifest.xml",
         transform(content, path) {
           return replaceEnvPlaceholders(content, path);
         },
       },
       {
-        from: "./src/config.template.js",
+        from: "./src/config.js.template",
         to: "config.js",
         transform(content, path) {
           return replaceEnvPlaceholders(content, path);
@@ -106,11 +106,11 @@ const pluginsDocker = [
   new CopyWebpackPlugin({
     patterns: [
       {
-        from: "./manifest.template.xml",
+        from: "./manifest.xml.template",
         to: "manifest.xml",
       },
       {
-        from: "./src/config.template.js",
+        from: "./src/config.js.template",
         to: "config.js",
       },
     ],
