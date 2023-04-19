@@ -114,6 +114,10 @@ module.exports = async (env, options) => {
       path: path.resolve(__dirname, "dist"),
       filename: "[name].js",
     },
+    externals: {
+      "./config": "config",
+      "./launchevent": "launchevent",
+    },
     resolve: {
       extensions: [".ts", ".tsx", ".html", ".js"],
     },
