@@ -1,6 +1,7 @@
 /* global global, Office, self, window */
-import config from "../config";
 import { AuthResult } from "../types/types";
+
+const config = window.config;
 
 document.addEventListener(
   "DOMContentLoaded",
