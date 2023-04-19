@@ -10,12 +10,12 @@ export function setCustomPropertyAsync(item, key, value) {
           if (saveResult.status === Office.AsyncResultStatus.Succeeded) {
             resolve(value);
           } else {
-            console.error('Error saving custom properties:', saveResult.error);
+            console.error("Error saving custom properties:", saveResult.error);
             reject(saveResult.error);
           }
         });
       } else {
-        console.error('Error loading custom properties:', result.error);
+        console.error("Error loading custom properties:", result.error);
         reject(result.error);
       }
     });
@@ -32,7 +32,7 @@ export function getCustomPropertyAsync(item, key) {
 
         resolve(value);
       } else {
-        console.error('Error loading custom properties:', result.error);
+        console.error("Error loading custom properties:", result.error);
         reject(result.error);
       }
     });

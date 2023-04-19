@@ -8,8 +8,15 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
+import config from "../config";
 import { AuthResult, EventResult } from "../types/types";
-import { appendToBody, getSubject, createMeetingSummary as createMeetingSummary, getOrganizer, setLocation } from "../utils/mailbox";
+import {
+  appendToBody,
+  getSubject,
+  createMeetingSummary as createMeetingSummary,
+  getOrganizer,
+  setLocation,
+} from "../utils/mailbox";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
 import { showNotification, removeNotification } from "../utils/notifications";
 import jwt_decode from "jwt-decode";
@@ -19,17 +26,19 @@ Office.onReady(function () {
   mailboxItem = Office.context.mailbox.item;
 });
 
-const apiUrl = "https://staging-nginz-https.zinfra.io/v2";
-
 const defaultSubjectValue = "New Appointment";
 let mailboxItem;
 
 async function addMeetingLink(event: Office.AddinCommands.Event) {
   try {
-    const wireId = await getCustomPropertyAsync(mailboxItem, 'wireId');
+    const wireId = await getCustomPropertyAsync(mailboxItem, "wireId");
     if(!wireId) {
-      console.log('There is no Wire meeting for this Outlook meeting, starting process of creating it...');
-      showNotification('adding-wire-meeting', 'Adding Wire meeting...', Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator);
+      console.log("There is no Wire meeting for this Outlook meeting, starting process of creating it...");
+      showNotification(
+        "adding-wire-meeting",
+        "Adding Wire meeting...",
+        Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator
+      );
       const subject = await getMailboxItemSubject(mailboxItem);
       const eventResult = await createEvent(subject || defaultSubjectValue);
       if (eventResult) {
@@ -38,18 +47,26 @@ async function addMeetingLink(event: Office.AddinCommands.Event) {
           const meetingSummary = createMeetingSummary(eventResult.link, organizer);
           appendToBody(mailboxItem, meetingSummary);
         });
-        await setCustomPropertyAsync(mailboxItem, 'wireId', eventResult.id);
-        await setCustomPropertyAsync(mailboxItem, 'wireLink', eventResult.link);
+        await setCustomPropertyAsync(mailboxItem, "wireId", eventResult.id);
+        await setCustomPropertyAsync(mailboxItem, "wireLink", eventResult.link);
       }
-      removeNotification('adding-wire-meeting');
+      removeNotification("adding-wire-meeting");
     } else {
-      console.log('Wire meeting is already created for this Outlook meeting');
-      showNotification('wire-meeting-exists', 'Wire meeting is already created for this Outlook meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage);
+      console.log("Wire meeting is already created for this Outlook meeting");
+      showNotification(
+        "wire-meeting-exists",
+        "Wire meeting is already created for this Outlook meeting",
+        Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+      );
     }
   } catch (error) {
     console.error(error);
-    removeNotification('adding-wire-meeting');
-    showNotification('adding-wire-meeting-error', 'There was error while adding wire meeting', Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage);
+    removeNotification("adding-wire-meeting");
+    showNotification(
+      "adding-wire-meeting-error",
+      "There was error while adding wire meeting",
+      Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+    );
   }
   event.completed();
 }
@@ -57,7 +74,7 @@ async function addMeetingLink(event: Office.AddinCommands.Event) {
 async function createEvent(name: string): Promise<EventResult> {
   try {
     const teamId = await getTeamId();
-    
+
     const payload = {
       access: ["invite", "code"],
       access_role_v2: ["guest", "non_team_member", "team_member", "service"],
@@ -74,26 +91,28 @@ async function createEvent(name: string): Promise<EventResult> {
     };
 
     // TODO: any/model
-    const response: any = await fetchWithAuthorizeDialog(apiUrl + "/conversations", {
+    const response: any = await fetchWithAuthorizeDialog(new URL("/v2/conversations", config.apiBaseUrl), {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
 
     if (response.ok) {
       const conversationId = (await response.json()).id;
-      console.log('conversationId: ', conversationId);
 
-      const responseLink: any = await fetchWithAuthorizeDialog(apiUrl + `/conversations/${conversationId}/code`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-      }).then((r) => r.json());
+      const responseLink: any = await fetchWithAuthorizeDialog(
+        new URL(`/conversations/${conversationId}/code`, config.apiBaseUrl),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      ).then((r) => r.json());
 
-      return { id: conversationId, link: responseLink.data.uri};
+      return { id: conversationId, link: responseLink.data.uri };
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }
@@ -103,16 +122,16 @@ async function createEvent(name: string): Promise<EventResult> {
   }
 }
 
-async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Promise<Response> {
+async function fetchWithAuthorizeDialog(url: string | URL, options: RequestInit): Promise<Response> {
   try {
-    let isLoggedIn = !!localStorage.getItem('refresh_token');
+    let isLoggedIn = !!localStorage.getItem("refresh_token");
 
     if (!isLoggedIn) {
       isLoggedIn = await authorizeDialog();
     }
 
     if (isLoggedIn) {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem("access_token");
       options.headers = {
         ...options.headers,
         Authorization: `Bearer ${token}`,
@@ -124,14 +143,14 @@ async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Prom
         isLoggedIn = await refreshTokenExchange();
 
         if (!isLoggedIn) {
-          localStorage.removeItem('access_token');
-          localStorage.removeItem('refresh_token');
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
 
           isLoggedIn = await authorizeDialog();
         }
 
         if (isLoggedIn) {
-          const token = localStorage.getItem('access_token');
+          const token = localStorage.getItem("access_token");
           options.headers = {
             ...options.headers,
             Authorization: `Bearer ${token}`,
@@ -155,24 +174,24 @@ async function fetchWithAuthorizeDialog(url: string, options: RequestInit): Prom
 }
 
 const refreshTokenExchange = async (): Promise<boolean> => {
-  const refreshToken = localStorage.getItem('refresh_token');
-  const tokenEndpoint = 'https://staging-nginz-https.zinfra.io/oauth/token';
-  const clientId = '3af4a9c5-4ae3-42f9-a168-981bbca4c56f';
+  const refreshToken = localStorage.getItem("refresh_token");
+  const tokenEndpoint = new URL("/oauth/token", config.apiBaseUrl);
+  const clientId = config.clientId;
 
   if (!refreshToken) {
     return false;
   }
 
   const body = new URLSearchParams();
-  body.append('grant_type', 'refresh_token');
-  body.append('client_id', clientId);
-  body.append('refresh_token', refreshToken);
+  body.append("grant_type", "refresh_token");
+  body.append("client_id", clientId);
+  body.append("refresh_token", refreshToken);
 
   try {
     const response = await fetch(tokenEndpoint, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       body: body.toString(),
     });
@@ -181,15 +200,15 @@ const refreshTokenExchange = async (): Promise<boolean> => {
       const json = await response.json();
       const { access_token, refresh_token } = json;
 
-      localStorage.setItem('access_token', access_token);
-      localStorage.setItem('refresh_token', refresh_token);
+      localStorage.setItem("access_token", access_token);
+      localStorage.setItem("refresh_token", refresh_token);
 
       return true;
     } else {
       return false;
     }
   } catch (error) {
-    console.error('Error during refresh token exchange:', error);
+    console.error("Error during refresh token exchange:", error);
     return false;
   }
 };
@@ -199,7 +218,7 @@ function authorizeDialog(): Promise<boolean> {
 
   return new Promise((resolve) => {
     Office.context.ui.displayDialogAsync(
-      "https://outlook.integrations.zinfra.io/client/authorize.html",
+      new URL("/authorize.html", config.addInBaseUrl).toString(),
       { height: 70, width: 40 },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
@@ -244,30 +263,26 @@ async function getMailboxItemSubject(mailboxItem: any): Promise<string> {
 }
 
 export async function isTokenStillValid(token: string) {
-  if(token) {
+  if (token) {
     const decodedToken = jwt_decode(token) as any;
-    console.log('isTokenStillValid for:');
-    console.log(token);
     const currentDate = new Date();
     const currentTime = currentDate.getTime();
-    console.log(decodedToken.exp * 1000 > currentTime);
     return decodedToken.exp * 1000 > currentTime;
-  } 
-  
+  }
+
   return false;
 }
 
 async function getTeamId() {
-  const response: any = await fetchWithAuthorizeDialog(apiUrl + `/self`, {
+  const response: any = await fetchWithAuthorizeDialog(new URL("/self", config.apiBaseUrl), {
     method: "GET",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
   }).then((r) => r.json());
 
   return response.team;
 }
-
 
 // Register the functions.
 Office.actions.associate("addMeetingLink", addMeetingLink);

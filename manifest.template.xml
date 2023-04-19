@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
-  <Version>0.0.5.5</Version>
+  <Version>0.0.6.0</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
-  <IconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-64.png"/>
-  <HighResolutionIconUrl DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://outlook.integrations.zinfra.io/client/support.html"/>
+  <IconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://${ADDIN_HOST}/support.html"/>
   <AppDomains>
-    <AppDomain>https://staging-nginz-https.zinfra.io</AppDomain>
-    <AppDomain>https://wire-webapp-edge.zinfra.io/</AppDomain>
+    <AppDomain>${API_HOST}</AppDomain>
+    <AppDomain>${AUTHORIZE_HOST}</AppDomain>
   </AppDomains>
   <Hosts>
     <Host Name="Mailbox"/>
@@ -24,7 +24,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://outlook.integrations.zinfra.io/client/taskpane.html"/>
+        <SourceLocation DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -101,13 +101,13 @@
           </ExtensionPoint>
 
           <!-- Enable launching the add-in on the included event. -->
-          <!-- <ExtensionPoint xsi:type="LaunchEvent">
+          <ExtensionPoint xsi:type="LaunchEvent">
             <LaunchEvents>
               <LaunchEvent Type="OnAppointmentSend" FunctionName="onAppointmentSendHandler" SendMode="PromptUser" />
-            </LaunchEvents> -->
+            </LaunchEvents>
             <!-- Identifies the runtime to be used (also referenced by the Runtime element). -->
-            <!-- <SourceLocation resid="WebViewRuntime.Url"/>
-          </ExtensionPoint> -->
+            <SourceLocation resid="WebViewRuntime.Url"/>
+          </ExtensionPoint>
 
         </DesktopFormFactor>
         
@@ -139,19 +139,19 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="icon-16" DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-16.png"/>
-        <bt:Image id="icon-32" DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-32.png"/>
-        <bt:Image id="icon-48" DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-48.png"/>
-        <bt:Image id="icon-64" DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-64.png"/>
-        <bt:Image id="icon-80" DefaultValue="https://outlook.integrations.zinfra.io/client/assets/icon-80.png"/>
+        <bt:Image id="icon-16" DefaultValue="https://${ADDIN_HOST}/assets/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="https://${ADDIN_HOST}/assets/icon-32.png"/>
+        <bt:Image id="icon-48" DefaultValue="https://${ADDIN_HOST}/assets/icon-48.png"/>
+        <bt:Image id="icon-64" DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
+        <bt:Image id="icon-80" DefaultValue="https://${ADDIN_HOST}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://outlook.integrations.zinfra.io/client/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://outlook.integrations.zinfra.io/client/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="https://${ADDIN_HOST}/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
         <!-- Entry for event based activation. -->
-        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://outlook.integrations.zinfra.io/client/commands.html" />
+        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://${ADDIN_HOST}/commands.html" />
         <!-- Entry needed for Outlook on Windows. -->
-        <bt:Url id="JSRuntime.Url" DefaultValue="https://outlook.integrations.zinfra.io/client/launchevent.js" />
+        <bt:Url id="JSRuntime.Url" DefaultValue="https://${ADDIN_HOST}/launchevent.js" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire meeting"/>

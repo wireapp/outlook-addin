@@ -1,9 +1,9 @@
 {
-  "name": "wire-for-outlook-clientonly",
-  "version": "0.0.2",
+  "name": "wire-for-outlook",
+  "version": "0.5.6",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OfficeDev/Office-Addin-TaskPane-React.git"
+    "url": "https://github.com/wireapp/outlook-addin.git"
   },
   "license": "MIT",
   "config": {

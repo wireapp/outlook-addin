@@ -6,16 +6,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
 
-const urlDev = "https://localhost:3000/";
-const urlStaging = "https://outlook.integrations.zinfra.io/";
-
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
   return { ca: httpsOptions.ca, key: httpsOptions.key, cert: httpsOptions.cert };
 }
 
 module.exports = async (env, options) => {
-  const dev = options.mode === "development";
   const config = {
     devtool: "source-map",
     entry: {
@@ -77,15 +73,12 @@ module.exports = async (env, options) => {
             to: "assets/[name][ext][query]",
           },
           {
-            from: "manifest*.xml",
-            to: "[name]" + "[ext]",
-            transform(content) {
-              if (dev) {
-                return content;
-              } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlStaging);
-              }
-            },
+            from: "./src/config.template.js",
+            to: "config.template.js",
+          },
+          {
+            from: "./manifest.template.xml",
+            to: "manifest.template.xml",
           },
         ],
       }),

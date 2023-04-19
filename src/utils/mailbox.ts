@@ -59,8 +59,6 @@ export function setBody(item, newBody) {
   body.setAsync(newBody, type, function (asyncResult) {
     if (asyncResult.status === Office.AsyncResultStatus.Failed) {
       console.error("Failed to set HTML body.", asyncResult.error.message);
-    } else {
-      // do something else perhaps?
     }
   });
 }
