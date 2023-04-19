@@ -107,3 +107,5 @@ dist
 nginx.conf
 manifest.xml
 src/config.js
+
+devcert/

@@ -10,7 +10,6 @@
   <HighResolutionIconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-128.png"/>
   <SupportUrl DefaultValue="https://${ADDIN_HOST}/support.html"/>
   <AppDomains>
-    <AppDomain>${API_HOST}</AppDomain>
     <AppDomain>${AUTHORIZE_HOST}</AppDomain>
   </AppDomains>
   <Hosts>

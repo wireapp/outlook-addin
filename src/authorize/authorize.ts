@@ -46,7 +46,7 @@ const generateCodeVerifier = async (): Promise<string> => {
 
 const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
   const hash = CryptoJS.SHA256(codeVerifier);
-  const base64Url = hash.toString(CryptoJS.enc.Base64).replace("+", "-").replace("/", "_").replace(/=+$/, "");
+  const base64Url = hash.toString(CryptoJS.enc.Base64url);
 
   return base64Url;
 };
