@@ -1,19 +1,13 @@
-/* global , Office, console */
+/* global Office, console */
 
-export function createMeetingSummary(groupInviteLink, organizer) {
-  const wireDownloadLink = "https://wire.com/en/download/";
-  const addinDownloadLink = undefined;
-  const fullInvite = `<div>
-    <p>${organizer} is inviting you to join this meeting in Wire.</p>
-    <p>Join meeting in Wire <a href="${groupInviteLink}">${groupInviteLink}</a></p>
-    <p><a href="${wireDownloadLink}">Download Wire</a></p>
-    <p><a href="${addinDownloadLink}">Get Wire add-in for Outlook</a></p>
-  </div>`;
-
-  return fullInvite;
+export async function getMailboxItemSubject(item): Promise<string> {
+  return new Promise((resolve) => {
+    getSubject(item, (result) => {
+      resolve(result);
+    });
+  });
 }
 
-/** Return */
 export async function getOrganizer(item, callback) {
   const { organizer } = item;
 
@@ -26,7 +20,6 @@ export async function getOrganizer(item, callback) {
   });
 }
 
-/** Returns value of current mailbox item subject, must pass a callback function to receive value */
 export async function getSubject(item, callback) {
   const { subject } = item;
 
@@ -39,7 +32,6 @@ export async function getSubject(item, callback) {
   });
 }
 
-/** Returns value of current mailbox item body, must pass a callback function to receive value*/
 export async function getBody(item, callback) {
   const { body } = item;
 
@@ -59,8 +51,6 @@ export function setBody(item, newBody) {
   body.setAsync(newBody, type, function (asyncResult) {
     if (asyncResult.status === Office.AsyncResultStatus.Failed) {
       console.error("Failed to set HTML body.", asyncResult.error.message);
-    } else {
-      // do something else perhaps?
     }
   });
 }
