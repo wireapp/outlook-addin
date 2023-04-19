@@ -1,5 +1,6 @@
-import config from "../config";
 import * as CryptoJS from "crypto-js";
+
+const config = window.config;
 
 document.addEventListener(
   "DOMContentLoaded",

@@ -8,7 +8,6 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
-import config from "../config";
 import { AuthResult, EventResult } from "../types/types";
 import {
   appendToBody,
@@ -20,6 +19,8 @@ import {
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customproperties";
 import { showNotification, removeNotification } from "../utils/notifications";
 import jwt_decode from "jwt-decode";
+
+const config = window.config;
 
 // Office is ready. Init
 Office.onReady(function () {
