@@ -159,7 +159,7 @@ module.exports = async (env, options) => {
       },
       server: {
         type: "https",
-        options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : undefined,
+        options: options.https !== undefined ? options.https : env.WEBPACK_BUILD,
       },
       host: process.env.ADDIN_HOST,
       port: process.env.npm_package_config_dev_server_port || 3000,
