@@ -32,6 +32,8 @@ let mailboxItem;
 
 async function addMeetingLink(event: Office.AddinCommands.Event) {
   try {
+    
+
     const wireId = await getCustomPropertyAsync(mailboxItem, "wireId");
     if(!wireId) {
       console.log("There is no Wire meeting for this Outlook meeting, starting process of creating it...");
