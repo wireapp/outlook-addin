@@ -32,35 +32,46 @@ let mailboxItem;
 
 async function addMeetingLink(event: Office.AddinCommands.Event) {
   try {
-    
-
-    const wireId = await getCustomPropertyAsync(mailboxItem, "wireId");
-    if(!wireId) {
-      console.log("There is no Wire meeting for this Outlook meeting, starting process of creating it...");
-      showNotification(
-        "adding-wire-meeting",
-        "Adding Wire meeting...",
-        Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator
+    const isFeatureEnabled = isOutlookCalIntegrationEnabled();
+    console.log("isOutlookCalIntegrationEnabled: ", isFeatureEnabled);
+    if (!isFeatureEnabled) {
+      console.log(
+        "There is no Outlook calendar integration enabled for this team. Please contact your Wire system administrator."
       );
-      const subject = await getMailboxItemSubject(mailboxItem);
-      const eventResult = await createEvent(subject || defaultSubjectValue);
-      if (eventResult) {
-        getOrganizer(mailboxItem, function (organizer) {
-          setLocation(mailboxItem, eventResult.link, () => {});
-          const meetingSummary = createMeetingSummary(eventResult.link, organizer);
-          appendToBody(mailboxItem, meetingSummary);
-        });
-        await setCustomPropertyAsync(mailboxItem, "wireId", eventResult.id);
-        await setCustomPropertyAsync(mailboxItem, "wireLink", eventResult.link);
-      }
-      removeNotification("adding-wire-meeting");
-    } else {
-      console.log("Wire meeting is already created for this Outlook meeting");
       showNotification(
         "wire-meeting-exists",
         "Wire meeting is already created for this Outlook meeting",
         Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
       );
+    } else {
+      const wireId = await getCustomPropertyAsync(mailboxItem, "wireId");
+      if (!wireId) {
+        console.log("There is no Wire meeting for this Outlook meeting, starting process of creating it...");
+        showNotification(
+          "adding-wire-meeting",
+          "Adding Wire meeting...",
+          Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator
+        );
+        const subject = await getMailboxItemSubject(mailboxItem);
+        const eventResult = await createEvent(subject || defaultSubjectValue);
+        if (eventResult) {
+          getOrganizer(mailboxItem, function (organizer) {
+            setLocation(mailboxItem, eventResult.link, () => {});
+            const meetingSummary = createMeetingSummary(eventResult.link, organizer);
+            appendToBody(mailboxItem, meetingSummary);
+          });
+          await setCustomPropertyAsync(mailboxItem, "wireId", eventResult.id);
+          await setCustomPropertyAsync(mailboxItem, "wireLink", eventResult.link);
+        }
+        removeNotification("adding-wire-meeting");
+      } else {
+        console.log("Wire meeting is already created for this Outlook meeting");
+        showNotification(
+          "wire-meeting-exists",
+          "Wire meeting is already created for this Outlook meeting",
+          Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+        );
+      }
     }
   } catch (error) {
     console.error(error);
@@ -285,6 +296,20 @@ async function getTeamId() {
   }).then((r) => r.json());
 
   return response.team;
+}
+
+async function isOutlookCalIntegrationEnabled() {
+  const response: any = await fetchWithAuthorizeDialog(new URL("/feature-configs", config.apiBaseUrl), {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  }).then((r) => r.json());
+
+  console.log("/feature-configs", response);
+  console.log("outlookCalIntegration", response.outlookCalIntegration);
+
+  return true;
 }
 
 // Register the functions.
