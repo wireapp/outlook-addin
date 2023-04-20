@@ -60,7 +60,12 @@ const plugins = [
   new HtmlWebpackTagsPlugin({
     tags: ["config.js"],
     append: false,
-    publicPath: false,
+    position: "head",
+  }),
+  new HtmlWebpackTagsPlugin({
+    tags: ["launchevent.js"],
+    files: ["commands.html"],
+    append: true,
     position: "head",
   }),
   new webpack.ProvidePlugin({
