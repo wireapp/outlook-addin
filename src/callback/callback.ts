@@ -1,5 +1,5 @@
 /* global global, Office, self, window */
-import { AuthResult } from "../types/types";
+import { AuthResult } from "../types/AuthResult";
 
 const config = window.config;
 

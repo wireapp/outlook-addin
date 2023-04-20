@@ -8,7 +8,9 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global global, Office, console */
 
-import { AuthResult, EventResult } from "../types/types";
+import { AuthResult } from "../types/AuthResult";
+import { EventResult } from "../types/EventResult";
+import { FeatureConfigsResponse, Feature } from "../types/FeatureConfigsResponse";
 import {
   appendToBody,
   getSubject,
@@ -32,18 +34,18 @@ let mailboxItem;
 
 async function addMeetingLink(event: Office.AddinCommands.Event) {
   try {
-    const isFeatureEnabled = isOutlookCalIntegrationEnabled();
-    console.log("isOutlookCalIntegrationEnabled: ", isFeatureEnabled);
+    const isFeatureEnabled = await isOutlookCalIntegrationEnabled();
     if (!isFeatureEnabled) {
       console.log(
         "There is no Outlook calendar integration enabled for this team. Please contact your Wire system administrator."
       );
       showNotification(
-        "wire-meeting-exists",
-        "Wire meeting is already created for this Outlook meeting",
+        "wire-for-outlook-disabled",
+        "Wire for Outlook is disabled for your team. Please contact your Wire system administrator.",
         Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
       );
     } else {
+      console.log("Outlook calendar integration feature is enabled for this team.");
       const wireId = await getCustomPropertyAsync(mailboxItem, "wireId");
       if (!wireId) {
         console.log("There is no Wire meeting for this Outlook meeting, starting process of creating it...");
@@ -104,8 +106,7 @@ async function createEvent(name: string): Promise<EventResult> {
       users: [],
     };
 
-    // TODO: any/model
-    const response: any = await fetchWithAuthorizeDialog(new URL("/v2/conversations", config.apiBaseUrl), {
+    const response = await fetchWithAuthorizeDialog(new URL("/v2/conversations", config.apiBaseUrl), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -299,17 +300,28 @@ async function getTeamId() {
 }
 
 async function isOutlookCalIntegrationEnabled() {
-  const response: any = await fetchWithAuthorizeDialog(new URL("/feature-configs", config.apiBaseUrl), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((r) => r.json());
+  try {
+    const response = await fetchWithAuthorizeDialog(new URL("/feature-configs", config.apiBaseUrl), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
-  console.log("/feature-configs", response);
-  console.log("outlookCalIntegration", response.outlookCalIntegration);
+    if (response.ok) {
+      const data: FeatureConfigsResponse = await response.json();
+      const outlookCalIntegration: Feature | undefined = data.outlookCalIntegration;
+      if (outlookCalIntegration && outlookCalIntegration.status === "enabled") {
+        return true;
+      }
+    } else {
+      console.error("Error while fetching outlookCalIntegration feature config. Status code: ", response.status);
+    }
+  } catch (error) {
+    console.error("Error while checking outlookCalIntegration feature config: ", error);
+  }
 
-  return true;
+  return false;
 }
 
 // Register the functions.
