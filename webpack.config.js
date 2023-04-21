@@ -194,10 +194,13 @@ module.exports = async (env, options) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      https: {
-        key: fs.readFileSync("./devcert/development-key.pem"),
-        cert: fs.readFileSync("./devcert/development-cert.pem"),
-      },
+      https:
+        fs.existsSync("./devcert/development-key.pem") && fs.existsSync("./devcert/development-cert.pem")
+          ? {
+              key: fs.readFileSync("./devcert/development-key.pem"),
+              cert: fs.readFileSync("./devcert/development-cert.pem"),
+            }
+          : false,
       host: process.env.ADDIN_HOST,
       port: process.env.ADDIN_PORT,
     },
