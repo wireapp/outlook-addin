@@ -1,3 +1,5 @@
+/* global Office, console */
+
 export function showNotification(key, message, type, icon = null, persistent = null) {
   const notificationMessage = {
     type,

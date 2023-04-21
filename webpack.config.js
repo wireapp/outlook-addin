@@ -6,6 +6,7 @@ const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const dotenv = require("dotenv");
+const fs = require("fs");
 
 const plugins = [
   new CopyWebpackPlugin({
@@ -193,12 +194,12 @@ module.exports = async (env, options) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      server: {
-        type: "https",
-        options: options.https !== undefined ? options.https : env.WEBPACK_BUILD,
+      https: {
+        key: fs.readFileSync("./devcert/development-key.pem"),
+        cert: fs.readFileSync("./devcert/development-cert.pem"),
       },
       host: process.env.ADDIN_HOST,
-      port: process.env.npm_package_config_dev_server_port || 3000,
+      port: process.env.ADDIN_PORT,
     },
   };
 
