@@ -14,7 +14,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "dev-server": "webpack serve --mode development --https-key devcert/development-key.pem --https-cert devcert/development-cert.pem",
+    "dev-server": "webpack serve --mode development",
     "lint": "office-addin-lint check",
     "lint:fix": "office-addin-lint fix",
     "prettier": "office-addin-lint prettier",
