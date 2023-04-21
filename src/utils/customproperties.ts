@@ -1,3 +1,5 @@
+/* global Office, console */
+
 export function setCustomPropertyAsync(item, key, value) {
   return new Promise((resolve, reject) => {
     item.loadCustomPropertiesAsync((result) => {
