@@ -4,7 +4,13 @@ import { AuthResult } from "../types/AuthResult";
 import { UrlParameters } from "./UrlParameters";
 import { config } from "../utils/config";
 
-document.addEventListener("DOMContentLoaded", handleCallback, false);
+document.addEventListener(
+  "DOMContentLoaded",
+  function () {
+    Office.onReady(handleCallback);
+  },
+  false
+);
 
 async function handleCallback(): Promise<void> {
   const urlParams = getUrlParameters();
