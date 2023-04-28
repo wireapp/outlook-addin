@@ -109,3 +109,5 @@ manifest.xml
 src/config.js
 
 devcert/
+
+.idea/
