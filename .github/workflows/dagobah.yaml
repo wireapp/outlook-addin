@@ -1,0 +1,99 @@
+name: Staging Deployment to Bots Infrastructure
+
+on:
+  push:
+    branches:
+      - staging
+
+env:
+  DOCKER_IMAGE: wire-bot/outlook-addin-client
+  SERVICE_NAME: outlook-addin-app
+
+  GKE_PROJECT: wire-bot
+  GKE_ZONE: europe-west1-c
+  GCR_REPOSITORY: eu.gcr.io
+  GKE_CLUSTER: dagobah
+
+  NAMESPACE: staging
+jobs:
+  publish:
+    name: Deployment to Bots Infrastructure
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set environment variables
+        run: |
+          echo "BRANCH_NAME=$(git branch --show-current)" >> $GITHUB_ENV
+          echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 ${{github.event.after}} | head -n 1)" >> $GITHUB_ENV
+          echo "DEPLOYMENT=${{ env.SERVICE_NAME }}" >> $GITHUB_ENV
+          echo "CONTAINER=outlook-addin" >> $GITHUB_ENV
+
+      - name: Print environment variables
+        env:
+          GITHUB_CONTEXT: ${{toJson(github)}}
+        run: |
+          echo -e "BRANCH_NAME = ${BRANCH_NAME}"
+          echo -e "COMMIT_MESSAGE = ${COMMIT_MESSAGE}"
+          echo -e "GITHUB_CONTEXT = ${GITHUB_CONTEXT}"
+
+      - name: Create tags and labels
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v1
+        with:
+          images: eu.gcr.io/${{ env.DOCKER_IMAGE }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to GCR
+        uses: docker/login-action@v1
+        with:
+          registry: eu.gcr.io
+          username: _json_key
+          password: ${{ secrets.GCR_ACCESS_JSON }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          push: true
+
+      - name: Prepare new name of the image
+        run: |
+          echo "NEW_IMAGE=eu.gcr.io/${{ env.DOCKER_IMAGE }}@${{ steps.docker_build.outputs.digest }}" >> $GITHUB_ENV
+
+      - name: Enable auth plugin
+        run: |
+          echo "USE_GKE_GCLOUD_AUTH_PLUGIN=True" >> $GITHUB_ENV
+
+      # Auth to GKE
+      - name: Authenticate to GKE
+        uses: google-github-actions/auth@v1
+        with:
+          project_id: wire-bot
+          credentials_json: ${{ secrets.GKE_SA_KEY }}
+          service_account: kubernetes-deployment-agent@wire-bot.iam.gserviceaccount.com
+
+      # Setup gcloud CLI
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      # Prepare components
+      - name: Prepare gcloud components
+        run: |
+          gcloud components install gke-gcloud-auth-plugin
+          gcloud components update
+          gcloud --quiet auth configure-docker
+      - name: Login to K8s
+        run: |
+          gcloud container clusters get-credentials "${GKE_CLUSTER}" --zone "${GKE_ZONE}";
+          kubectl config set-context --current --namespace="${NAMESPACE}";
+      - name: Deploy the Service
+        run: |
+          kubectl set image deployment "${DEPLOYMENT}" "${CONTAINER}=${NEW_IMAGE}";

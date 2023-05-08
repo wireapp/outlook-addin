@@ -1,15 +1,15 @@
 {
-  "name": "office-addin-taskpane-react",
-  "version": "0.0.1",
+  "name": "wire-for-outlook",
+  "version": "0.5.6",
   "repository": {
     "type": "git",
-    "url": "https://github.com/OfficeDev/Office-Addin-TaskPane-React.git"
+    "url": "https://github.com/wireapp/outlook-addin.git"
   },
   "license": "MIT",
   "config": {
     "app_to_debug": "outlook",
     "app_type_to_debug": "desktop",
-    "dev_server_port": 3000
+    "dev_server_port": 8080
   },
   "scripts": {
     "build": "webpack --mode production",
@@ -28,7 +28,10 @@
   "dependencies": {
     "@fluentui/react": "^8.52.3",
     "core-js": "^3.9.1",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
     "es6-promise": "^4.2.8",
+    "jwt-decode": "^3.1.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "regenerator-runtime": "^0.13.7"
@@ -36,6 +39,7 @@
   "devDependencies": {
     "@babel/core": "^7.13.10",
     "@babel/preset-typescript": "^7.13.0",
+    "@types/crypto-js": "^4.1.1",
     "@types/office-js": "^1.0.256",
     "@types/office-runtime": "^1.0.23",
     "@types/react": "^17.0.39",
@@ -51,6 +55,7 @@
     "file-loader": "^6.2.0",
     "html-loader": "^4.1.0",
     "html-webpack-plugin": "^5.5.0",
+    "html-webpack-tags-plugin": "^3.0.2",
     "less": "^3.9.0",
     "less-loader": "^10.0.1",
     "office-addin-cli": "^1.5.4",

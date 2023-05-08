@@ -102,3 +102,12 @@ dist
 
 # TernJS port file
 .tern-port
+
+# configuration files
+nginx.conf
+manifest.xml
+src/config.js
+
+devcert/
+
+.idea/
