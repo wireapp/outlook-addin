@@ -7,7 +7,9 @@ import { config } from "../utils/config";
 document.addEventListener(
   "DOMContentLoaded",
   function () {
-    Office.onReady(handleCallback);
+    if (Office && Office.context && Office.context.host === Office.HostType.Outlook) {
+      Office.onReady(handleCallback);
+    }
   },
   false
 );
