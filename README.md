@@ -12,25 +12,6 @@ window.config = {
 };
 ```
 
-## Nginx config template
-```
-server {
-    listen 80;
-    server_name ${ADDIN_HOST};
-    root /usr/share/nginx/html;
-    index taskpane.html taskpane.htm;
-}
-```
-
-## Entrypoint.sh
-```
-envsubst < /usr/share/nginx/html/manifest.xml.template > /usr/share/nginx/html/manifest.xml
-envsubst < /usr/share/nginx/html/config.js.template > /usr/share/nginx/html/config.js
-envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
-
-nginx -g "daemon off;"
-```
-
 ## Local Storage
 - isLoggedIn
 - refresh_token
