@@ -173,7 +173,7 @@ module.exports = async (env, options) => {
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
-          use: ["react-hot-loader/webpack", "ts-loader"],
+          use: ["ts-loader"],
         },
         {
           test: /\.html$/,

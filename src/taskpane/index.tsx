@@ -1,5 +1,5 @@
+import { hot } from "react-hot-loader/root";
 import App from "./components/App";
-import { AppContainer } from "react-hot-loader";
 import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import { ThemeProvider } from "@fluentui/react";
 import * as React from "react";
@@ -13,13 +13,13 @@ let isOfficeInitialized = false;
 
 const title = "Task Pane Add-in";
 
+const HotApp = hot(App);
+
 const render = (Component) => {
   ReactDOM.render(
-    <AppContainer>
-      <ThemeProvider>
-        <Component title={title} isOfficeInitialized={isOfficeInitialized} />
-      </ThemeProvider>
-    </AppContainer>,
+    <ThemeProvider>
+      <Component title={title} isOfficeInitialized={isOfficeInitialized} />
+    </ThemeProvider>,
     document.getElementById("container")
   );
 };
@@ -27,12 +27,12 @@ const render = (Component) => {
 /* Render application after Office initializes */
 Office.onReady(() => {
   isOfficeInitialized = true;
-  render(App);
+  render(HotApp);
 });
 
 if ((module as any).hot) {
   (module as any).hot.accept("./components/App", () => {
     const NextApp = require("./components/App").default;
-    render(NextApp);
+    render(hot(NextApp));
   });
 }
