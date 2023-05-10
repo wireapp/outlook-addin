@@ -5,9 +5,9 @@ Wire add-in for Microsoft Outlook
 ## App Config
 ```
 window.config = {
-  addInBaseUrl: "https://${ADDIN_HOST}",
-  apiBaseUrl: "https://${API_HOST}",
-  authorizeUrl: "https://${AUTHORIZE_HOST}/auth",
+  addInBaseUrl: "${BASE_URL}",
+  apiBaseUrl: "${WIRE_API_BASE_URL}",
+  authorizeUrl: "${WIRE_API_AUTHORIZATION_ENDPOINT}",
   clientId: "${CLIENT_ID}",
 };
 ```

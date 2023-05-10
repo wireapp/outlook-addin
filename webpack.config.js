@@ -78,9 +78,9 @@ function replaceEnvPlaceholders(content, outputPath) {
   if (outputPath.endsWith(".xml") || outputPath.endsWith(".js")) {
     return content
       .toString()
-      .replace(/\${ADDIN_HOST}/g, process.env.ADDIN_HOST + (process.env.ADDIN_PORT ? ":" + process.env.ADDIN_PORT : ""))
-      .replace(/\${API_HOST}/g, process.env.API_HOST)
-      .replace(/\${AUTHORIZE_HOST}/g, process.env.AUTHORIZE_HOST)
+      .replace(/\${BASE_URL}/g, process.env.BASE_URL)
+      .replace(/\${WIRE_API_BASE_URL}/g, process.env.WIRE_API_BASE_URL)
+      .replace(/\${WIRE_API_AUTHORIZATION_ENDPOINT}/g, process.env.WIRE_API_AUTHORIZATION_ENDPOINT)
       .replace(/\${CLIENT_ID}/g, process.env.CLIENT_ID);
   }
 
@@ -127,12 +127,17 @@ module.exports = async (env, options) => {
   const isDevelopmentMode = options.mode === "development";
 
   let envKeys;
+  let host, port;
   if (isDevelopmentMode) {
     const envVars = dotenv.config().parsed;
     envKeys = Object.keys(envVars).reduce((prev, next) => {
       prev[`process.env.${next}`] = JSON.stringify(envVars[next]);
       return prev;
     }, {});
+
+    const baseUrl = new URL(process.env.BASE_URL);
+    host = baseUrl.hostname;
+    port = baseUrl.port;
   }
 
   const config = {
@@ -201,8 +206,8 @@ module.exports = async (env, options) => {
               cert: fs.readFileSync("./devcert/development-cert.pem"),
             }
           : false,
-      host: process.env.ADDIN_HOST,
-      port: process.env.ADDIN_PORT,
+      host,
+      port: port || 8080,
     },
   };
 
