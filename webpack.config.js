@@ -75,7 +75,7 @@ const plugins = [
 ];
 
 function replaceEnvPlaceholders(content, outputPath) {
-  if (outputPath.endsWith(".xml") || outputPath.endsWith(".js")) {
+  if (outputPath.endsWith(".xml.template") || outputPath.endsWith(".js.template")) {
     return content
       .toString()
       .replace(/\${BASE_URL}/g, process.env.BASE_URL)

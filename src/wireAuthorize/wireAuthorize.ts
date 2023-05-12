@@ -10,6 +10,12 @@ export async function fetchWithAuthorizeDialog(url: string | URL, options: Reque
   try {
     let isAuthenticated = isLoggedIn();
 
+    const refreshToken = getRefreshToken();
+
+    if (!isAuthenticated && refreshToken) {
+      isAuthenticated = await refreshTokenExchange();
+    }
+
     if (!isAuthenticated) {
       isAuthenticated = await authorizeDialog();
     }
@@ -63,7 +69,7 @@ function authorizeDialog(): Promise<boolean> {
       { height: 70, width: 40 },
       (asyncResult) => {
         if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-          console.error("dialog result failed: " + asyncResult.error.message);
+          console.error("dialog result failed: ", asyncResult.error.message);
           resolve(false);
         } else {
           const dialog = asyncResult.value;
@@ -95,12 +101,18 @@ async function refreshTokenExchange(): Promise<boolean> {
     return false;
   }
 
-  const response = await fetch(new URL("/auth/refresh", config.apiBaseUrl).toString(), {
+  let data = new URLSearchParams();
+  data.append("grant_type", "refresh_token");
+  data.append("refresh_token", refreshToken);
+  data.append("client_id", config.clientId);
+
+  const response = await fetch(new URL("/oauth/token", config.apiBaseUrl), {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: JSON.stringify({ refresh_token: refreshToken }),
+    body: data,
   });
 
   if (response.ok) {
