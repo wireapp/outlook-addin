@@ -27,7 +27,7 @@ jobs:
 
       - name: Create tags and labels
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: docker/metadata-action@v3
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
