@@ -1,15 +1,13 @@
-name: Staging Deployment to Bots Infrastructure
+name: Staging Deployment to zinfra.io
 
 on:
   push:
-    branches:
-      - staging
 
 env:
   DOCKER_IMAGE: quay.io/wire/outlook-addin
 jobs:
   publish:
-    name: Deployment to Bots Infrastructure
+    name: Deployment to zinfra.io
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -32,6 +30,8 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1
         with:
           images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=semver,pattern={{raw}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
