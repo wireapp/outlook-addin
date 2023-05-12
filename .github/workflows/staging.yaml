@@ -2,8 +2,6 @@ name: Staging Deployment to zinfra.io
 
 on:
   push:
-    branches:
-      - staging
 
 env:
   DOCKER_IMAGE: quay.io/wire/outlook-addin
