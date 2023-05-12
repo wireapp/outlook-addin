@@ -18,7 +18,15 @@ document.addEventListener(
 
 async function handleCallback(): Promise<void> {
   const urlParams = getUrlParameters();
-  const { code, receivedState } = urlParams;
+  const { code, receivedState, error } = urlParams;
+
+  if (error) {
+    console.error("Error in auth flow: ", error);
+    const authResult = { success: false, error };
+    sendMessageToParent(authResult);
+    return;
+  }
+
   const storedCodeVerifier = sessionStorage.getItem("code_verifier");
   const storedState = sessionStorage.getItem("state");
 
@@ -42,6 +50,7 @@ function getUrlParameters(): UrlParameters {
   return {
     code: urlParams.get("code"),
     receivedState: urlParams.get("state"),
+    error: urlParams.get("error"),
   };
 }
 

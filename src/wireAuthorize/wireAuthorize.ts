@@ -5,10 +5,17 @@ import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "../uti
 import jwt_decode from "jwt-decode";
 import { DecodedToken } from "../types/DecodedToken";
 import { config } from "../utils/config";
+import { showNotification, removeNotification } from "../utils/notifications";
 
 export async function fetchWithAuthorizeDialog(url: string | URL, options: RequestInit): Promise<Response> {
   try {
     let isAuthenticated = isLoggedIn();
+
+    const refreshToken = getRefreshToken();
+
+    if (!isAuthenticated && refreshToken) {
+      isAuthenticated = await refreshTokenExchange();
+    }
 
     if (!isAuthenticated) {
       isAuthenticated = await authorizeDialog();
@@ -40,14 +47,35 @@ export async function fetchWithAuthorizeDialog(url: string | URL, options: Reque
           };
           return await fetch(url, options);
         } else {
+          removeNotification("auth-failed");
+          showNotification(
+            "auth-failed",
+            "Authorization failed.",
+            Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+          );
+    
           throw new Error("Authorization failed");
         }
       } else if (!response.ok) {
+        removeNotification("auth-failed");
+        showNotification(
+          "auth-failed",
+          "Authorization failed.",
+          Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+        );
+
         throw new Error(`Request failed with status ${response.status}`);
       }
 
       return response;
     } else {
+      removeNotification("auth-failed");
+      showNotification(
+        "auth-failed",
+        "Authorization failed.",
+        Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+      );
+
       throw new Error("Authorization failed");
     }
   } catch (error) {
