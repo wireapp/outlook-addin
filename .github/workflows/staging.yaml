@@ -1,4 +1,4 @@
-name: Image Build
+name: Staging Deployment to zinfra.io
 
 on:
   push:
@@ -7,7 +7,7 @@ env:
   DOCKER_IMAGE: quay.io/wire/outlook-addin
 jobs:
   publish:
-    name: Build and Push to Quay
+    name: Deployment to zinfra.io
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -31,8 +31,7 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=sha,format=long
-            type=ref,event=tag
+            type=semver,pattern={{raw}}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
