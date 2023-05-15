@@ -31,8 +31,8 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=sha, format=long
-            type=ref
+            type=sha,format=long
+            type=ref,event=tag
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
