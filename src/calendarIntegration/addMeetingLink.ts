@@ -65,11 +65,19 @@ export async function addMeetingLink(event: Office.AddinCommands.Event) {
     removeNotification("adding-wire-meeting");
     removeNotification("adding-wire-meeting-error");
 
-    showNotification(
-      "adding-wire-meeting-error",
-      "There was error while adding wire meeting",
-      Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
-    );
+    if (error.message.includes("authorization failed")) {
+      showNotification(
+        "adding-wire-meeting-error",
+        "Authorization failed.",
+        Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+      );
+    } else {
+      showNotification(
+        "adding-wire-meeting-error",
+        "There was error while adding wire meeting",
+        Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+      );
+    }
   }
 
   event.completed();

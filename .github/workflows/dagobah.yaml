@@ -1,4 +1,4 @@
-name: Staging Deployment to Bots Infrastructure
+name: Deployment to Dagobah
 
 on:
   push:
@@ -17,7 +17,7 @@ env:
   NAMESPACE: staging
 jobs:
   publish:
-    name: Deployment to Bots Infrastructure
+    name: Build and Deploy
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2

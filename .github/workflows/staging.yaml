@@ -1,15 +1,13 @@
-name: Staging Deployment to Bots Infrastructure
+name: Image Build
 
 on:
   push:
-    branches:
-      - staging
 
 env:
   DOCKER_IMAGE: quay.io/wire/outlook-addin
 jobs:
   publish:
-    name: Deployment to Bots Infrastructure
+    name: Build and Push to Quay
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -29,9 +27,12 @@ jobs:
 
       - name: Create tags and labels
         id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v1
+        uses: docker/metadata-action@v3
         with:
           images: ${{ env.DOCKER_IMAGE }}
+          tags: |
+            type=sha,format=long
+            type=ref,event=tag
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
