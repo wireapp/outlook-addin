@@ -6,7 +6,7 @@ set -euo pipefail
 
 if [ -z ${BASE_URL:-} ]; then echo "BASE_URL is unset"; exit 1; fi
 if [ -z ${WIRE_API_BASE_URL:-} ]; then echo "WIRE_API_BASE_URL is unset"; exit 1; fi
-if [ -z ${WIRE_API_AUTHORIZATION_ENDPOINT:-} ]; then echo "WIRE_API_AUTHORIZATION_ENDPOINT is unset"; exit 1; fi
+if [ -z ${WIRE_AUTHORIZATION_ENDPOINT:-} ]; then echo "WIRE_AUTHORIZATION_ENDPOINT is unset"; exit 1; fi
 if [ -z ${CLIENT_ID:-} ]; then echo "CLIENT_ID is unset"; exit 1; fi
 
 envsubst  < /usr/share/nginx/html/manifest.xml.template > /usr/share/nginx/html/manifest.xml
