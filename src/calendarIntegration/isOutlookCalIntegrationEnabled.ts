@@ -20,10 +20,14 @@ export async function isOutlookCalIntegrationEnabled() {
         return true;
       }
     } else {
-      console.error("Error while fetching outlookCalIntegration feature config. Status code: ", response.status);
+      const errorMsg = `Error while fetching outlookCalIntegration feature config. Status code: ${response.status}`;
+      console.error(errorMsg);
+      throw new Error(errorMsg);
     }
   } catch (error) {
-    console.error("Error while checking outlookCalIntegration feature config: ", error);
+    const errorMsg = `Error while checking outlookCalIntegration feature config: ${error}`;
+    console.error(errorMsg);
+    throw new Error(errorMsg);
   }
 
   return false;

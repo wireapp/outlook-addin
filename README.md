@@ -5,30 +5,11 @@ Wire add-in for Microsoft Outlook
 ## App Config
 ```
 window.config = {
-  addInBaseUrl: "https://${ADDIN_HOST}",
-  apiBaseUrl: "https://${API_HOST}",
-  authorizeUrl: "https://${AUTHORIZE_HOST}/auth",
+  addInBaseUrl: "${BASE_URL}",
+  apiBaseUrl: "${WIRE_API_BASE_URL}",
+  authorizeUrl: "${WIRE_AUTHORIZATION_ENDPOINT}",
   clientId: "${CLIENT_ID}",
 };
-```
-
-## Nginx config template
-```
-server {
-    listen 80;
-    server_name ${ADDIN_HOST};
-    root /usr/share/nginx/html;
-    index taskpane.html taskpane.htm;
-}
-```
-
-## Entrypoint.sh
-```
-envsubst < /usr/share/nginx/html/manifest.xml.template > /usr/share/nginx/html/manifest.xml
-envsubst < /usr/share/nginx/html/config.js.template > /usr/share/nginx/html/config.js
-envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
-
-nginx -g "daemon off;"
 ```
 
 ## Local Storage
@@ -57,3 +38,22 @@ nginx -g "daemon off;"
 
 ## Business Logic
 - 
+
+## How to create new Service with the BE
+```agsl
+curl -s -X POST localhost:8080/i/oauth/clients \
+    -H "Content-Type: application/json" \
+    -d '{
+      "application_name":"Wire Microsoft Outlook Calendar Add-in",
+      "redirect_url":"https://outlook.wire.com/callback.html" 
+    }'
+```
+
+## How to install the Add-in in MS Outlook
+- Open an email and got to 3 dots and select Get Add-ins
+![Step 1](images/step_1.png)
+- Go to My Add-ins, Custom Add-ins, Add a Custom Add-in
+![Step 2](images/step_2.png)
+- Pick up a URL and add: https://outlook.integrations.wire.com/manifest.xml
+![Step 3](images/step_3.png)
+Wire button will appear in the toolbar when new event is being created

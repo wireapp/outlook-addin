@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
-  <Version>0.0.6.0</Version>
+  <Version>0.0.6.1</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
-  <IconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
-  <HighResolutionIconUrl DefaultValue="https://${ADDIN_HOST}/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="https://${ADDIN_HOST}/support.html"/>
-  <AppDomains>
-    <AppDomain>${AUTHORIZE_HOST}</AppDomain>
-  </AppDomains>
+  <IconUrl DefaultValue="${BASE_URL}/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="${BASE_URL}/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="${BASE_URL}/support.html"/>
   <Hosts>
     <Host Name="Mailbox"/>
   </Hosts>
@@ -23,7 +20,7 @@
   <FormSettings>
     <Form xsi:type="ItemRead">
       <DesktopSettings>
-        <SourceLocation DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
+        <SourceLocation DefaultValue="${BASE_URL}/taskpane.html"/>
         <RequestedHeight>250</RequestedHeight>
       </DesktopSettings>
     </Form>
@@ -138,19 +135,19 @@
     </Hosts>
     <Resources>
       <bt:Images>
-        <bt:Image id="icon-16" DefaultValue="https://${ADDIN_HOST}/assets/icon-16.png"/>
-        <bt:Image id="icon-32" DefaultValue="https://${ADDIN_HOST}/assets/icon-32.png"/>
-        <bt:Image id="icon-48" DefaultValue="https://${ADDIN_HOST}/assets/icon-48.png"/>
-        <bt:Image id="icon-64" DefaultValue="https://${ADDIN_HOST}/assets/icon-64.png"/>
-        <bt:Image id="icon-80" DefaultValue="https://${ADDIN_HOST}/assets/icon-80.png"/>
+        <bt:Image id="icon-16" DefaultValue="${BASE_URL}/assets/icon-16.png"/>
+        <bt:Image id="icon-32" DefaultValue="${BASE_URL}/assets/icon-32.png"/>
+        <bt:Image id="icon-48" DefaultValue="${BASE_URL}/assets/icon-48.png"/>
+        <bt:Image id="icon-64" DefaultValue="${BASE_URL}/assets/icon-64.png"/>
+        <bt:Image id="icon-80" DefaultValue="${BASE_URL}/assets/icon-80.png"/>
       </bt:Images>
       <bt:Urls>
-        <bt:Url id="Commands.Url" DefaultValue="https://${ADDIN_HOST}/commands.html"/>
-        <bt:Url id="Taskpane.Url" DefaultValue="https://${ADDIN_HOST}/taskpane.html"/>
+        <bt:Url id="Commands.Url" DefaultValue="${BASE_URL}/commands.html"/>
+        <bt:Url id="Taskpane.Url" DefaultValue="${BASE_URL}/taskpane.html"/>
         <!-- Entry for event based activation. -->
-        <bt:Url id="WebViewRuntime.Url" DefaultValue="https://${ADDIN_HOST}/commands.html" />
+        <bt:Url id="WebViewRuntime.Url" DefaultValue="${BASE_URL}/commands.html" />
         <!-- Entry needed for Outlook on Windows. -->
-        <bt:Url id="JSRuntime.Url" DefaultValue="https://${ADDIN_HOST}/launchevent.js" />
+        <bt:Url id="JSRuntime.Url" DefaultValue="${BASE_URL}/launchevent.js" />
       </bt:Urls>
       <bt:ShortStrings>
         <bt:String id="residDescription" DefaultValue="Wire meeting"/>
