@@ -38,3 +38,22 @@ window.config = {
 
 ## Business Logic
 - 
+
+## How to create new Service with the BE
+```agsl
+curl -s -X POST localhost:8080/i/oauth/clients \
+    -H "Content-Type: application/json" \
+    -d '{
+      "application_name":"Wire Microsoft Outlook Calendar Add-in",
+      "redirect_url":"https://outlook.wire.com/callback.html" 
+    }'
+```
+
+## How to install the Add-in in MS Outlook
+- Open an email and got to 3 dots and select Get Add-ins
+![Step 1](images/step_1.png)
+- Go to My Add-ins, Custom Add-ins, Add a Custom Add-in
+![Step 2](images/step_2.png)
+- Pick up a URL and add: https://outlook.integrations.wire.com/manifest.xml
+![Step 3](images/step_3.png)
+Wire button will appear in the toolbar when new event is being created
