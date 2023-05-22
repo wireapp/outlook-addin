@@ -1,4 +1,4 @@
-# outlook-addin
+# Wire's Microsoft Outlook Calendar Add-in
 
 Wire add-in for Microsoft Outlook
 
@@ -39,7 +39,7 @@ window.config = {
 ## Business Logic
 - 
 
-## How to create new Service with the BE
+## How to create new Service with the BE (Brig)
 ```agsl
 curl -s -X POST localhost:8080/i/oauth/clients \
     -H "Content-Type: application/json" \
@@ -50,10 +50,14 @@ curl -s -X POST localhost:8080/i/oauth/clients \
 ```
 
 ## How to install the Add-in in MS Outlook
-- Open an email and got to 3 dots and select Get Add-ins
+- Open an email and go to 3 dots and select Get Add-ins
 ![Step 1](images/step_1.png)
 - Go to My Add-ins, Custom Add-ins, Add a Custom Add-in
 ![Step 2](images/step_2.png)
 - Pick up a URL and add: https://outlook.integrations.wire.com/manifest.xml
 ![Step 3](images/step_3.png)
 Wire button will appear in the toolbar when new event is being created
+
+## Troubleshooting
+- If you are getting `401` error, please make sure that you have enabled the feature flag `outlookCalIntegration` for your account.
+- If your browser is blocking third-party cookies, please make sure to allow them for the add-in to work properly. Or you can add `https://outlook.office.com` to the list of allowed websites.
