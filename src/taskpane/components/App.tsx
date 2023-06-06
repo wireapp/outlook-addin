@@ -1,10 +1,12 @@
 import * as React from "react";
-import { DefaultButton } from "@fluentui/react";
-import Header from "./Header";
-import HeroList, { HeroListItem } from "./HeroList";
 import Progress from "./Progress";
-
-/* global require */
+import LoggedIn from "./LoggedIn";
+import LoggedOut from "./LoggedOut";
+import { authorizeDialog } from "../../wireAuthorize/wireAuthorize";
+import { removeTokens } from "../../utils/tokenStore";
+import { setUserDetails, removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
+import { getSelf } from "../../calendarIntegration/getSelf";
+import { SelfUser } from "../../types/SelfUser";
 
 export interface AppProps {
   title: string;
@@ -12,67 +14,60 @@ export interface AppProps {
 }
 
 export interface AppState {
-  listItems: HeroListItem[];
+  isLoggedIn: boolean;
+  user: SelfUser | null;
 }
 
 export default class App extends React.Component<AppProps, AppState> {
   constructor(props, context) {
     super(props, context);
     this.state = {
-      listItems: [],
+      isLoggedIn: false,
+      user: null,
     };
   }
 
   componentDidMount() {
-    this.setState({
-      listItems: [
-        {
-          icon: "Ribbon",
-          primaryText: "Achieve more with Office integration",
-        },
-        {
-          icon: "Unlock",
-          primaryText: "Unlock features and functionality",
-        },
-        {
-          icon: "Design",
-          primaryText: "Create and visualize like a pro",
-        },
-      ],
-    });
+    const user = getUserDetails();
+    if (user) {
+      this.setState({ isLoggedIn: true, user });
+    }
   }
 
-  click = async () => {
-    /**
-     * Insert your Outlook code here
-     */
+  login = async () => {
+    const isLoggedIn = await authorizeDialog();
+    this.setState({ isLoggedIn });
+    if (isLoggedIn) {
+      const user = await getUserDetails();
+      this.setState({ isLoggedIn, user });
+    }
+  };
+
+  logout = async () => {
+    removeTokens();
+    removeUserDetails();
+    this.setState({ isLoggedIn: false, user: null });
   };
 
   render() {
     const { title, isOfficeInitialized } = this.props;
+    const { isLoggedIn, user } = this.state;
 
     if (!isOfficeInitialized) {
       return (
-        <Progress
-          title={title}
-          logo={require("./../../../assets/logo-filled.png")}
-          message="Please sideload your addin to see app body."
-        />
+        <Progress title={title} logo={require("./../../../assets/logo-filled.png")} message="Loading in progress..." />
       );
     }
 
     return (
-      <div className="ms-welcome">
-        <Header
-          logo={require("./../../../assets/logo-filled.png")}
-          title={this.props.title}
-          message="Wire for Outlook"
-        />
-        <HeroList message="Wire plugin for Outlook" items={[]}>
-          <DefaultButton className="ms-welcome__action" iconProps={{ iconName: "ChevronRight" }} onClick={this.click}>
-            Create meeting
-          </DefaultButton>
-        </HeroList>
+      <div className="ms-Grid">
+      <div className="ms-Grid-row">
+        <div className="ms-Grid-col">
+          <h1>Settings</h1>
+  
+        {isLoggedIn && user ? <LoggedIn user={user} onLogout={this.logout} /> : <LoggedOut onLogin={this.login} />}
+      </div>
+      </div>
       </div>
     );
   }

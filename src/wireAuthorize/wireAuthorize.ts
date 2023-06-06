@@ -6,6 +6,8 @@ import jwt_decode from "jwt-decode";
 import { DecodedToken } from "../types/DecodedToken";
 import { config } from "../utils/config";
 import { showNotification, removeNotification } from "../utils/notifications";
+import { setUserDetails, removeUserDetails } from "../utils/userDetailsStore";
+import { getSelf } from "../calendarIntegration/getSelf";
 
 export async function fetchWithAuthorizeDialog(url: string | URL, options: RequestInit): Promise<Response> {
   try {
@@ -84,7 +86,7 @@ export async function fetchWithAuthorizeDialog(url: string | URL, options: Reque
   }
 }
 
-function authorizeDialog(): Promise<boolean> {
+export function authorizeDialog(): Promise<boolean> {
   return new Promise((resolve) => {
     Office.context.ui.displayDialogAsync(
       new URL("/authorize.html", config.addInBaseUrl).toString(),
@@ -97,14 +99,17 @@ function authorizeDialog(): Promise<boolean> {
           const dialog = asyncResult.value;
           dialog.addEventHandler(
             Office.EventType.DialogMessageReceived,
-            (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
+            async (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
               const authResult = JSON.parse(messageEvent.message) as AuthResult;
 
               if (authResult.success) {
                 setTokens(authResult.access_token, authResult.refresh_token);
+                const user = await getSelf();
+                setUserDetails(user);
                 resolve(true);
               } else {
                 removeTokens();
+                removeUserDetails();
                 resolve(false);
               }
 
