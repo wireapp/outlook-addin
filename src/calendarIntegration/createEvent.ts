@@ -2,7 +2,7 @@
 
 import { EventResult } from "../types/EventResult";
 import { config } from "../utils/config";
-import { getTeamId } from "./getTeamId";
+import { getTeamId } from "./getSelf";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
 
 export async function createEvent(name: string): Promise<EventResult> {
