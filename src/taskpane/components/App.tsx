@@ -2,7 +2,7 @@ import * as React from "react";
 import Progress from "./Progress";
 import LoggedIn from "./LoggedIn";
 import LoggedOut from "./LoggedOut";
-import { authorizeDialog } from "../../wireAuthorize/wireAuthorize";
+import { authorizeDialog, revokeOauthTokens } from "../../wireAuthorize/wireAuthorize";
 import { removeTokens } from "../../utils/tokenStore";
 import { setUserDetails, removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
 import { getSelf } from "../../calendarIntegration/getSelf";
@@ -44,6 +44,7 @@ export default class App extends React.Component<AppProps, AppState> {
   };
 
   logout = async () => {
+    await revokeOauthTokens();
     removeTokens();
     removeUserDetails();
     this.setState({ isLoggedIn: false, user: null });
