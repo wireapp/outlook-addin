@@ -152,7 +152,7 @@ async function refreshTokenExchange(): Promise<boolean> {
   }
 }
 
-async function revokeOauthToken(): Promise<boolean> {
+export async function revokeOauthToken(): Promise<boolean> {
     const refreshToken = getRefreshToken();
   if (!refreshToken) {
     return false;
