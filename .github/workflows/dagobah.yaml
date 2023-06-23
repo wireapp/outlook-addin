@@ -1,9 +1,9 @@
 name: Deployment to Dagobah
 
-on:
-  push:
-    branches:
-      - staging
+#on:
+#  push:
+#    branches:
+#      - staging
 
 env:
   DOCKER_IMAGE: wire-bot/outlook-addin-client
