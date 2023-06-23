@@ -153,14 +153,15 @@ async function refreshTokenExchange(): Promise<boolean> {
 }
 
 export async function revokeOauthToken(): Promise<boolean> {
-    const refreshToken = getRefreshToken();
+  const refreshToken = getRefreshToken();
   if (!refreshToken) {
     return false;
   }
 
-  let data = new URLSearchParams();
-  data.append("refresh_token", refreshToken);
-  data.append("client_id", config.clientId);
+  const payload = {
+    refresh_token: refreshToken,
+    client_id: config.clientId,
+  }
 
   const response = await fetch(new URL("/oauth/revoke", config.apiBaseUrl), {
     method: "POST",
@@ -168,7 +169,7 @@ export async function revokeOauthToken(): Promise<boolean> {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: data,
+    body: JSON.stringify(payload),
   });
 
   if (response.ok) {
@@ -177,7 +178,6 @@ export async function revokeOauthToken(): Promise<boolean> {
     return false;
   }
 }
-
 
 export function isTokenValid(token: string): boolean {
   if (token) {
