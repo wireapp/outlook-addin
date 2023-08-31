@@ -15,9 +15,6 @@ value: https://wire-webapp-qa.zinfra.io/auth
 
 - name: CLIENT_ID
 value: e30a9b94-8e0d-4b15-8a1a-236f68729cdd
-
-- name: SUPPORT_URL
-value: https://support.wire.com
 ```
 
 ## App Config
