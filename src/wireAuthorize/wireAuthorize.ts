@@ -152,6 +152,33 @@ async function refreshTokenExchange(): Promise<boolean> {
   }
 }
 
+export async function revokeOauthToken(): Promise<boolean> {
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    return false;
+  }
+
+  const payload = {
+    refresh_token: refreshToken,
+    client_id: config.clientId,
+  }
+
+  const response = await fetch(new URL("/oauth/revoke", config.apiBaseUrl), {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (response.ok) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 export function isTokenValid(token: string): boolean {
   if (token) {
     const decodedToken = jwt_decode<DecodedToken>(token);
