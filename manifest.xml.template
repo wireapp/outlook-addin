@@ -8,7 +8,7 @@
   <Description DefaultValue="Wire meeting integration for Outlook"/>
   <IconUrl DefaultValue="${BASE_URL}/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="${BASE_URL}/assets/icon-128.png"/>
-  <SupportUrl DefaultValue="${BASE_URL}/support.html"/>
+  <SupportUrl DefaultValue="${SUPPORT_URL}/support.html"/>
   <Hosts>
     <Host Name="Mailbox"/>
   </Hosts>
