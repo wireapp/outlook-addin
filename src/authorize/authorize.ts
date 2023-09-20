@@ -26,9 +26,8 @@ async function redirectToAuthorize(): Promise<void> {
   url.searchParams.append("scope", scope);
   url.searchParams.append("code_challenge_method", codeChallengeMethod);
   url.searchParams.append("code_challenge", codeChallenge);
-  url.hash = "authorize";
 
-  window.location.href = url.href;
+  window.location.href = url.href.replace("/auth?", "/auth/#/login?");
 }
 
 function generateRandomState(): string {
