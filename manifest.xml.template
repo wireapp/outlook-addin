@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
-  <Version>0.1.9</Version>
+  <Version>1.0.0</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
   <IconUrl DefaultValue="${BASE_URL}/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="${BASE_URL}/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://support.wire.com" />
   <Hosts>
     <Host Name="Mailbox"/>
   </Hosts>
