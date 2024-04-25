@@ -56,7 +56,7 @@ export default class App extends React.Component<AppProps, AppState> {
 
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo={require("./../../../assets/logo-filled.png")} message="Loading in progress..." />
+        <Progress title={title} logo={require("./../../../assets/icon-128.png")} message="Loading in progress..." />
       );
     }
 
