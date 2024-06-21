@@ -63,7 +63,7 @@ function sendMessageToParent(authResult: AuthResult): void {
 async function exchangeCodeForTokens(code: string, codeVerifier: string): Promise<AuthResult> {
   const clientId = config.clientId;
   const redirectUri = new URL("/callback.html", config.addInBaseUrl);
-  const tokenEndpoint = new URL("/oauth/token", config.apiBaseUrl);
+  const tokenEndpoint = new URL(`${config.apiVersion}/oauth/token`, config.apiBaseUrl);
 
   const body = getRequestBody(code, clientId, redirectUri, codeVerifier);
 
