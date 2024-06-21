@@ -55,7 +55,7 @@ export async function fetchWithAuthorizeDialog(url: string | URL, options: Reque
             "Authorization failed.",
             Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
           );
-    
+
           throw new Error("Authorization failed");
         }
       } else if (!response.ok) {
@@ -161,7 +161,7 @@ export async function revokeOauthToken(): Promise<boolean> {
   const payload = {
     refresh_token: refreshToken,
     client_id: config.clientId,
-  }
+  };
 
   const response = await fetch(new URL("/oauth/revoke", config.apiBaseUrl), {
     method: "POST",
@@ -180,14 +180,32 @@ export async function revokeOauthToken(): Promise<boolean> {
 }
 
 export function isTokenValid(token: string): boolean {
-  if (token) {
-    const decodedToken = jwt_decode<DecodedToken>(token);
-    const currentDate = new Date();
-    const currentTime = currentDate.getTime();
-    return decodedToken.exp * 1000 > currentTime;
+  // null-check
+  if (!token) {
+    console.error("isTokenValid: token was null", token);
+    return false;
   }
 
-  return false;
+  // decode token
+  let decodedToken: DecodedToken;
+  try {
+    decodedToken = jwt_decode<DecodedToken>(token);
+  } catch (err) {
+    console.error("isTokenValid: error decoding token", err);
+    return false;
+  }
+
+  // check token
+  let result: boolean;
+  try {
+    result = decodedToken.exp * 1000 > new Date().getTime();
+  } catch (err) {
+    console.error("isTokenValid: error checking token validity");
+    return false;
+  }
+
+  // return if token is valid
+  return result;
 }
 
 function isLoggedIn(): boolean {
