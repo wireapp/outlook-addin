@@ -133,7 +133,7 @@ async function refreshTokenExchange(): Promise<boolean> {
   data.append("refresh_token", refreshToken);
   data.append("client_id", config.clientId);
 
-  const response = await fetch(new URL("/oauth/token", config.apiBaseUrl), {
+  const response = await fetch(new URL(`${config.apiVersion}/oauth/token`, config.apiBaseUrl), {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -163,7 +163,7 @@ export async function revokeOauthToken(): Promise<boolean> {
     client_id: config.clientId,
   }
 
-  const response = await fetch(new URL("/oauth/revoke", config.apiBaseUrl), {
+  const response = await fetch(new URL(`${config.apiVersion}/oauth/revoke`, config.apiBaseUrl), {
     method: "POST",
     headers: {
       Accept: "application/json",

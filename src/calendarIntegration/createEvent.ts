@@ -11,7 +11,7 @@ export async function createEvent(name: string): Promise<EventResult> {
 
     const payload = {
       access: ["invite", "code"],
-      access_role_v2: ["guest", "non_team_member", "team_member", "service"],
+      access_role: ["guest", "non_team_member", "team_member", "service"],
       conversation_role: "wire_member",
       name: name,
       protocol: "proteus",
@@ -21,10 +21,9 @@ export async function createEvent(name: string): Promise<EventResult> {
         managed: false,
         teamid: teamId,
       },
-      users: [],
     };
 
-    const response = await fetchWithAuthorizeDialog(new URL("/v2/conversations", config.apiBaseUrl), {
+    const response = await fetchWithAuthorizeDialog(new URL(`${config.apiVersion}/conversations`, config.apiBaseUrl), {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,12 +35,13 @@ export async function createEvent(name: string): Promise<EventResult> {
       const conversationId = (await response.json()).id;
 
       const responseLink: any = await fetchWithAuthorizeDialog(
-        new URL(`/conversations/${conversationId}/code`, config.apiBaseUrl),
+        new URL(`${config.apiVersion}/conversations/${conversationId}/code`, config.apiBaseUrl),
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({ password: null}),
         }
       ).then((r) => r.json());
 

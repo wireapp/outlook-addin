@@ -10,6 +10,9 @@ value: https://outlook.integrations.zinfra.io
 - name: WIRE_API_BASE_URL
 value: https://staging-nginz-https.zinfra.io
 
+- name: WIRE_API_VERSION
+value: v5
+
 - name: WIRE_AUTHORIZATION_ENDPOINT
 value: https://wire-webapp-qa.zinfra.io/auth
 
@@ -22,10 +25,13 @@ value: e30a9b94-8e0d-4b15-8a1a-236f68729cdd
 window.config = {
   addInBaseUrl: "${BASE_URL}",
   apiBaseUrl: "${WIRE_API_BASE_URL}",
+  apiVersion: "${WIRE_API_VERSION}",
   authorizeUrl: "${WIRE_AUTHORIZATION_ENDPOINT}",
   clientId: "${CLIENT_ID}",
 };
 ```
+## API Version
+The WIRE_API_VERSION environment variable can be optionally set to define the API version for the application. If not explicitly set, the default value of 'v5' will be used.
 
 ## Local Storage
 - isLoggedIn
