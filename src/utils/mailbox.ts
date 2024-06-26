@@ -32,17 +32,21 @@ export async function getSubject(item, callback) {
   });
 }
 
-export async function getBody(item, callback) {
-  const { body } = item;
+export function getBody(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { body } = item;
 
-  await body.getAsync(Office.CoercionType.Html, function (asyncResult) {
-    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-      console.error("Failed to get HTML body.");
-    } else {
-      callback(asyncResult.value);
-    }
+    body.getAsync(Office.CoercionType.Html, function (asyncResult) {
+      if (asyncResult.status === Office.AsyncResultStatus.Failed) {
+        console.error("Failed to get HTML body.");
+        reject(new Error("Failed to get HTML body."));
+      } else {
+        resolve(asyncResult.value);
+      }
+    });
   });
 }
+
 
 export function setBody(item, newBody) {
   const { body } = item;
@@ -55,11 +59,30 @@ export function setBody(item, newBody) {
   });
 }
 
-export function appendToBody(item, contentToAppend) {
-  getBody(item, (currentBody) => {
+export async function appendToBody(item, contentToAppend) {
+  try {
+    const currentBody = await getBody(item);
     setBody(item, currentBody + contentToAppend);
+  } catch (error) {
+    console.error("Failed to append to body:", error);
+  }
+}
+
+export async function getLocation(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { location } = item;
+
+    location.getAsync(function (asyncResult) {
+      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error(`Action failed with message ${asyncResult.error.message}`);
+        reject(new Error(`Failed to get location: ${asyncResult.error.message}`));
+        return;
+      }
+      resolve(asyncResult.value);
+    });
   });
 }
+
 
 export async function setLocation(item, meetlingLink, callback) {
   const { location } = item;
@@ -69,7 +92,6 @@ export async function setLocation(item, meetlingLink, callback) {
       console.error(`Action failed with message ${asyncResult.error.message}`);
       return;
     }
-    console.log(`Successfully set location to ${location}`);
     callback();
   });
 }
