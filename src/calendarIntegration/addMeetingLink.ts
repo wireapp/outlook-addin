@@ -1,6 +1,6 @@
 /* global Office, console */
 
-import { appendToBody, getBody, getLocation, getMailboxItemSubject, getOrganizer, setLocation } from "../utils/mailbox";
+import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, setLocation, setSubject } from "../utils/mailbox";
 import { createMeetingSummary } from "./createMeetingSummary";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customProperties";
 import { showNotification, removeNotification } from "../utils/notifications";
@@ -48,6 +48,31 @@ async function fetchCustomProperties(): Promise<void> {
 }
 
 /**
+ * Creates a new subject for the mailbox item by getting the meeting date and appending it to the existing subject.
+ *
+ * @return {Promise<void>} A promise that resolves when the new subject is set on the mailbox item.
+ */
+async function createSubject() {
+  const getMeetingDate = await getMeetingTime(mailboxItem);
+  const subject = `CLDR::${getMeetingDate}`;
+
+  await setSubject(mailboxItem, subject);
+}
+
+/**
+ * Appends the meeting date to the current subject of the mailbox item.
+ *
+ * @param {string} currentSubject - The current subject of the mailbox item.
+ * @return {Promise<void>} A promise that resolves when the subject is appended.
+ */
+async function appendSubject(currentSubject:string){
+  const getMeetingDate = await getMeetingTime(mailboxItem);
+  const newSubject = `${currentSubject} - CLDR::${getMeetingDate}`;
+
+  await setSubject(mailboxItem, newSubject);
+}
+
+/**
  * Creates a new meeting by calling the createEvent function with a subject obtained from the mailboxItem.
  * If the eventResult is not null, it sets the createdMeeting object to eventResult, updates the meeting details,
  * and sets the custom properties wireId and wireLink on the mailboxItem.
@@ -63,10 +88,12 @@ async function createNewMeeting(): Promise<void> {
   );
 
   const subject = await getMailboxItemSubject(mailboxItem);
+
   const eventResult = await createEvent(subject || defaultSubjectValue);
 
   if (eventResult) {
     createdMeeting = eventResult;
+    subject ? appendSubject(subject) : createSubject();
     await updateMeetingDetails(eventResult);
     await setCustomPropertyAsync(mailboxItem, "wireId", eventResult.id);
     await setCustomPropertyAsync(mailboxItem, "wireLink", eventResult.link);
@@ -74,6 +101,7 @@ async function createNewMeeting(): Promise<void> {
 
   removeNotification("adding-wire-meeting");
 }
+
 
 /**
  * Updates the meeting details by setting the location and appending the meeting summary to the body of the mailbox item.
@@ -83,7 +111,7 @@ async function createNewMeeting(): Promise<void> {
  */
 async function updateMeetingDetails(eventResult: EventResult): Promise<void> {
   getOrganizer(mailboxItem, async (organizer) => {
-    await setLocation(mailboxItem, eventResult.link, () => {});
+    await setLocation(mailboxItem, eventResult.link);
     const meetingSummary = createMeetingSummary(eventResult.link, organizer);
     await appendToBody(mailboxItem, meetingSummary);
   });
@@ -100,18 +128,30 @@ async function handleExistingMeeting(): Promise<void> {
   }
 
   const currentBody = await getBody(mailboxItem);
+  const currentSubject = await getMailboxItemSubject(mailboxItem);
   const currentLocation = await getLocation(mailboxItem);
   const normalizedCurrentBody = currentBody.replace(/&amp;/g, "&");
   const normalizedMeetingLink = createdMeeting.link?.replace(/&amp;/g, "&");
 
   getOrganizer(mailboxItem, async (organizer) => {
-    if (!currentLocation) {
-      await setLocation(mailboxItem, createdMeeting.link, () => {});
+
+    //Check if subject is empty
+    if(!currentSubject.includes("CLDR::")){
+      currentSubject ? appendSubject(currentSubject) : createSubject();
     }
+
+    //Check if location is empty
+    if (!currentLocation) {
+      await setLocation(mailboxItem, createdMeeting.link);
+    }
+
     const meetingSummary = createMeetingSummary(createdMeeting.link, organizer);
+
+    //Check if body is empty
     if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
       await appendToBody(mailboxItem, meetingSummary);
     }
+
   });
 
   await setCustomPropertyAsync(mailboxItem, "wireId", createdMeeting.id);
