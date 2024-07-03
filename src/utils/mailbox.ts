@@ -8,15 +8,18 @@ export async function getMailboxItemSubject(item): Promise<string> {
   });
 }
 
-export async function getOrganizer(item, callback) {
-  const { organizer } = item;
+export async function getOrganizer(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { organizer } = item;
 
-  await organizer.getAsync(function (asyncResult) {
-    if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-      console.error("Failed to get organizer.");
-    } else {
-      callback(asyncResult.value.displayName);
-    }
+    organizer.getAsync(function(asyncResult) {
+      if (asyncResult.status === Office.AsyncResultStatus.Succeeded) {
+        resolve(asyncResult.value.displayName);
+      } else {
+        console.error(asyncResult.error);
+        reject(new Error("Failed to get organizer"));
+      }
+    });
   });
 }
 

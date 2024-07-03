@@ -8,6 +8,7 @@ import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled
 import { createEvent } from "./createEvent";
 import { mailboxItem } from "../commands/commands";
 import { EventResult } from "../types/EventResult";
+import { getUserDetails } from "../utils/userDetailsStore";
 
 const defaultSubjectValue = "New Appointment";
 let createdMeeting: EventResult;
@@ -82,11 +83,18 @@ async function createNewMeeting(): Promise<void> {
  * @return {Promise<void>} A promise that resolves when the meeting details are updated.
  */
 async function updateMeetingDetails(eventResult: EventResult): Promise<void> {
-  getOrganizer(mailboxItem, async (organizer) => {
-    await setLocation(mailboxItem, eventResult.link, () => {});
-    const meetingSummary = createMeetingSummary(eventResult.link, organizer);
-    await appendToBody(mailboxItem, meetingSummary);
-  });
+
+  await setLocation(mailboxItem, eventResult.link, () => {});
+  // const organizer = await getOrganizer(mailboxItem);
+  const user = getUserDetails();
+  const meetingSummary = createMeetingSummary(eventResult.link, user.name);
+  await appendToBody(mailboxItem, user.name);
+  // getOrganizer(mailboxItem, async (organizer) => {
+  //   const meetingSummary = createMeetingSummary(eventResult.link, organizer);
+  //   await appendToBody(mailboxItem, meetingSummary);
+  // });
+
+
 }
 
 /**
@@ -104,15 +112,15 @@ async function handleExistingMeeting(): Promise<void> {
   const normalizedCurrentBody = currentBody.replace(/&amp;/g, "&");
   const normalizedMeetingLink = createdMeeting.link?.replace(/&amp;/g, "&");
 
-  getOrganizer(mailboxItem, async (organizer) => {
-    if (!currentLocation) {
-      await setLocation(mailboxItem, createdMeeting.link, () => {});
-    }
-    const meetingSummary = createMeetingSummary(createdMeeting.link, organizer);
-    if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
-      await appendToBody(mailboxItem, meetingSummary);
-    }
-  });
+  // getOrganizer(mailboxItem, async (organizer) => {
+  //   if (!currentLocation) {
+  //     await setLocation(mailboxItem, createdMeeting.link, () => {});
+  //   }
+  //   const meetingSummary = createMeetingSummary(createdMeeting.link, organizer);
+  //   if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
+  //     await appendToBody(mailboxItem, meetingSummary);
+  //   }
+  // });
 
   await setCustomPropertyAsync(mailboxItem, "wireId", createdMeeting.id);
   await setCustomPropertyAsync(mailboxItem, "wireLink", createdMeeting.link);
@@ -126,8 +134,10 @@ async function handleExistingMeeting(): Promise<void> {
  */
 async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> {
   try {
+
     const isEnabled = await isFeatureEnabled();
     if (!isEnabled) return;
+
 
     await fetchCustomProperties();
     if (!createdMeeting) {
