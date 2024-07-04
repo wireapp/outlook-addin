@@ -9,13 +9,13 @@ interface LoggedInProps {
 
 const LoggedIn: React.FC<LoggedInProps> = ({ user, onLogout }) => (
   <div>
-      Welcome!<br/>
-      <br/>
-      Display Name: {user.name}<br/> 
+      <p>Welcome, {user.name}! You are logged in on 
+      Wire for Outlook with the following credentials:
+      </p>
       Username: {user.handle}<br/>
       E-mail: {user.email}<br/>
       <br/>
-      <DefaultButton onClick={onLogout}>Log out</DefaultButton>
+      <DefaultButton onClick={onLogout}>Disconnect Add-in</DefaultButton>
   </div>
 );
 
