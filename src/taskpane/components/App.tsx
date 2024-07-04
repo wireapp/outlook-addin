@@ -64,7 +64,7 @@ export default class App extends React.Component<AppProps, AppState> {
       <div className="ms-Grid">
       <div className="ms-Grid-row">
         <div className="ms-Grid-col">
-          <h1>Settings</h1>
+          <h3>Wire for Outlook</h3>
   
         {isLoggedIn && user ? <LoggedIn user={user} onLogout={this.logout} /> : <LoggedOut onLogin={this.login} />}
       </div>
