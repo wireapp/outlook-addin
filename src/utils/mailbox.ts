@@ -1,11 +1,16 @@
-/* global Office, console */
+export async function getMailboxItemSubject(item) : Promise<string> {
+  return new Promise((resolve,reject) => {
+  const { subject } = item;
 
-export async function getMailboxItemSubject(item): Promise<string> {
-  return new Promise((resolve) => {
-    getSubject(item, (result) => {
-      resolve(result);
-    });
+  subject.getAsync(function (asyncResult) {
+    if (asyncResult.status == Office.AsyncResultStatus.Failed) {
+      console.error("Failed to get item subject");
+      reject(new Error("Failed to get item subject"));
+    } else {
+      resolve(asyncResult.value);
+    }
   });
+});
 }
 
 export async function getOrganizer(item): Promise<string> {
@@ -39,17 +44,39 @@ export async function getOrganizerOnMobile(item) {
   });
 }
 
-export async function getSubject(item, callback) {
+export async function setSubject(item, newSubject:string){
+    
   const { subject } = item;
 
-  await subject.getAsync(function (asyncResult) {
-    if (asyncResult.status == Office.AsyncResultStatus.Failed) {
-      console.error("Failed to get item subject");
-    } else {
-      callback(asyncResult.value);
+  subject.setAsync(newSubject, function (asyncResult) {
+    if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+      console.error(`Action failed with message ${asyncResult.error.message}`);
+      return;
     }
   });
 }
+
+export async function getMeetingTime(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { start } = item;
+
+    start.getAsync(function (asyncResult) {
+      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error(`Action failed with message ${asyncResult.error.message}`);
+        reject(new Error(`Failed to get start time: ${asyncResult.error.message}`));
+        return;
+      }
+        const locale = Office.context.displayLanguage;
+        const formattedDate = new Date(asyncResult.value).toLocaleString(locale, {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+        });
+        resolve(formattedDate);
+    });
+  });
+}
+
 
 export function getBody(item): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -87,7 +114,7 @@ export async function appendToBody(item, contentToAppend) {
   }
 }
 
-export async function getLocation(item): Promise<string> {
+export async function getLocation(item) {
   return new Promise((resolve, reject) => {
     const { location } = item;
 
@@ -103,7 +130,7 @@ export async function getLocation(item): Promise<string> {
 }
 
 
-export async function setLocation(item, meetlingLink, callback) {
+export async function setLocation(item, meetlingLink) {
   const { location } = item;
 
   location.setAsync(meetlingLink, function (asyncResult) {
@@ -111,6 +138,5 @@ export async function setLocation(item, meetlingLink, callback) {
       console.error(`Action failed with message ${asyncResult.error.message}`);
       return;
     }
-    callback();
   });
 }
