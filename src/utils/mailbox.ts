@@ -23,6 +23,22 @@ export async function getOrganizer(item): Promise<string> {
   });
 }
 
+export async function getOrganizerOnMobile(item) {
+  return new Promise((resolve, reject) => {
+    item.body.getAsync(
+      "html",
+      { asyncContext: Office.context.mailbox.userProfile.displayName },
+      (result) => {
+        if (result.status === Office.AsyncResultStatus.Succeeded) {
+          resolve(result.asyncContext);
+        } else {
+          reject(new Error("Failed to get body."));
+        }
+      }
+    );
+  });
+}
+
 export async function getSubject(item, callback) {
   const { subject } = item;
 
