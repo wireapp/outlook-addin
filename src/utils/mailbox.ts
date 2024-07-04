@@ -41,8 +41,7 @@ export async function getOrganizerOnMobile(item) {
         }
       }
     );
-  });
-}
+
 
 export async function setSubject(item, newSubject:string){
     
