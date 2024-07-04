@@ -1,22 +1,5 @@
-/* global Office, console */
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-import {
-  appendToBody,
-  getBody,
-  getLocation,
-  getMailboxItemSubject,
-  getOrganizer,
-  getOrganizerOnMobile,
-  setLocation,
-} from "../utils/mailbox";
-=======
-import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, setLocation, setSubject } from "../utils/mailbox";
->>>>>>> ea46165 (renamed logout, refactored and added subject handler)
-=======
-import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, setLocation, setSubject } from "../utils/mailbox";
->>>>>>> 72a878b (style: changed style of Settings Tab)
+import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, getOrganizerOnMobile, setLocation } from "../utils/mailbox";
 import { createMeetingSummary } from "./createMeetingSummary";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customProperties";
 import { showNotification, removeNotification } from "../utils/notifications";
@@ -24,10 +7,7 @@ import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled
 import { createEvent } from "./createEvent";
 import { mailboxItem } from "../commands/commands";
 import { EventResult } from "../types/EventResult";
-<<<<<<< HEAD
 import { PlatformType } from "../types/PlatformTypes";
-=======
->>>>>>> 72a878b (style: changed style of Settings Tab)
 
 const defaultSubjectValue = "New Appointment";
 let createdMeeting: EventResult;
@@ -114,7 +94,6 @@ async function createNewMeeting(): Promise<void> {
 
 
 /**
-<<<<<<< HEAD
  * Retrieves the platform-specific organizer for the current mailbox item.
  *
  * @return {Promise<any>} A promise that resolves to the platform-specific organizer.
@@ -127,28 +106,18 @@ async function getPlatformSpecificOrganizer(): Promise<any> {
   }
 }
 /**
-=======
->>>>>>> 72a878b (style: changed style of Settings Tab)
  * Updates the meeting details by setting the location and appending the meeting summary to the body of the mailbox item.
  *
  * @param {EventResult} eventResult - The event result containing the link for the meeting.
  * @return {Promise<void>} A promise that resolves when the meeting details are updated.
  */
 async function updateMeetingDetails(eventResult: EventResult): Promise<void> {
-<<<<<<< HEAD
   await setLocation(mailboxItem, eventResult.link);
 
   const organizer = await getPlatformSpecificOrganizer();
 
   const meetingSummary = createMeetingSummary(eventResult.link, organizer);
   await appendToBody(mailboxItem, meetingSummary);
-=======
-  getOrganizer(mailboxItem, async (organizer) => {
-    await setLocation(mailboxItem, eventResult.link);
-    const meetingSummary = createMeetingSummary(eventResult.link, organizer);
-    await appendToBody(mailboxItem, meetingSummary);
-  });
->>>>>>> 72a878b (style: changed style of Settings Tab)
 }
 
 /**
@@ -166,7 +135,6 @@ async function handleExistingMeeting(): Promise<void> {
   const currentLocation = await getLocation(mailboxItem);
   const normalizedCurrentBody = currentBody.replace(/&amp;/g, "&");
   const normalizedMeetingLink = createdMeeting.link?.replace(/&amp;/g, "&");
-<<<<<<< HEAD
   const organizer = await getPlatformSpecificOrganizer();
   const meetingSummary = createMeetingSummary(createdMeeting.link, organizer);
 
@@ -178,24 +146,6 @@ async function handleExistingMeeting(): Promise<void> {
   if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
     await appendToBody(mailboxItem, meetingSummary);
   }
-=======
-
-  getOrganizer(mailboxItem, async (organizer) => {
-
-    //Check if location is empty
-    if (!currentLocation) {
-      await setLocation(mailboxItem, createdMeeting.link);
-    }
-
-    const meetingSummary = createMeetingSummary(createdMeeting.link, organizer);
-
-    //Check if body is empty
-    if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
-      await appendToBody(mailboxItem, meetingSummary);
-    }
-
-  });
->>>>>>> 72a878b (style: changed style of Settings Tab)
 
   await setCustomPropertyAsync(mailboxItem, "wireId", createdMeeting.id);
   await setCustomPropertyAsync(mailboxItem, "wireLink", createdMeeting.link);
@@ -222,15 +172,12 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
     console.error("Error during adding Wire meeting link", error);
     handleAddMeetingLinkError(error);
   } finally {
-<<<<<<< HEAD
     if (
       Office.context.platform.toString() == PlatformType.IOS ||
       Office.context.platform.toString() == PlatformType.ANDROID
     ) {
       await appendToBody(mailboxItem, "");
     }
-=======
->>>>>>> 72a878b (style: changed style of Settings Tab)
     event.completed();
   }
 }
