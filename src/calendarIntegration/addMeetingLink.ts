@@ -176,7 +176,7 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
       Office.context.platform.toString() == PlatformType.IOS ||
       Office.context.platform.toString() == PlatformType.ANDROID
     ) {
-      await appendToBody(mailboxItem, "");
+      await appendToBody(mailboxItem, ""); //Workaround for mobile devices - Without body gets removed
     }
     event.completed();
   }

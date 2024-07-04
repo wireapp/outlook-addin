@@ -40,7 +40,9 @@ export async function getOrganizerOnMobile(item) {
           reject(new Error("Failed to get body."));
         }
       }
-    );
+    )
+  });
+}
 
 
 export async function setSubject(item, newSubject:string){
