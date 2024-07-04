@@ -48,29 +48,19 @@ async function fetchCustomProperties(): Promise<void> {
 }
 
 /**
- * Creates a new subject for the mailbox item by getting the meeting date and appending it to the existing subject.
+ * Modifies the conversation subject by appending the meeting date.
  *
- * @return {Promise<void>} A promise that resolves when the new subject is set on the mailbox item.
+ * @param {string} conversationSubject - The current subject of the conversation.
+ * @return {Promise<string>} The modified conversation subject.
  */
-async function createSubject() {
-  const getMeetingDate = await getMeetingTime(mailboxItem);
-  const subject = `CLDR::${getMeetingDate}`;
+async function modifyConversationName(conversationSubject: string): Promise<string> {
+  const meetingDate = await getMeetingTime(mailboxItem);
 
-  await setSubject(mailboxItem, subject);
+  const modifiedSubject = conversationSubject ? `CLDR:: ${conversationSubject}` : `CLDR:: ${meetingDate}`;
+
+  return modifiedSubject;
 }
 
-/**
- * Appends the meeting date to the current subject of the mailbox item.
- *
- * @param {string} currentSubject - The current subject of the mailbox item.
- * @return {Promise<void>} A promise that resolves when the subject is appended.
- */
-async function appendSubject(currentSubject:string){
-  const getMeetingDate = await getMeetingTime(mailboxItem);
-  const newSubject = `${currentSubject} - CLDR::${getMeetingDate}`;
-
-  await setSubject(mailboxItem, newSubject);
-}
 
 /**
  * Creates a new meeting by calling the createEvent function with a subject obtained from the mailboxItem.
@@ -87,13 +77,13 @@ async function createNewMeeting(): Promise<void> {
     Office.MailboxEnums.ItemNotificationMessageType.ProgressIndicator
   );
 
-  const subject = await getMailboxItemSubject(mailboxItem);
+  let subject = await getMailboxItemSubject(mailboxItem);
+  subject = await modifyConversationName(subject);
 
   const eventResult = await createEvent(subject || defaultSubjectValue);
 
   if (eventResult) {
     createdMeeting = eventResult;
-    subject ? appendSubject(subject) : createSubject();
     await updateMeetingDetails(eventResult);
     await setCustomPropertyAsync(mailboxItem, "wireId", eventResult.id);
     await setCustomPropertyAsync(mailboxItem, "wireLink", eventResult.link);
@@ -134,11 +124,6 @@ async function handleExistingMeeting(): Promise<void> {
   const normalizedMeetingLink = createdMeeting.link?.replace(/&amp;/g, "&");
 
   getOrganizer(mailboxItem, async (organizer) => {
-
-    //Check if subject is empty
-    if(!currentSubject.includes("CLDR::")){
-      currentSubject ? appendSubject(currentSubject) : createSubject();
-    }
 
     //Check if location is empty
     if (!currentLocation) {
