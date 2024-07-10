@@ -1,5 +1,5 @@
 
-import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, getOrganizerOnMobile, setLocation } from "../utils/mailbox";
+import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, getOrganizerOnMobile, isMobileDevice, setLocation } from "../utils/mailbox";
 import { createMeetingSummary } from "./createMeetingSummary";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customProperties";
 import { showNotification, removeNotification } from "../utils/notifications";
@@ -99,7 +99,7 @@ async function createNewMeeting(): Promise<void> {
  * @return {Promise<any>} A promise that resolves to the platform-specific organizer.
  */
 async function getPlatformSpecificOrganizer(): Promise<any> {
-  if (Office.context.platform.toString() == PlatformType.IOS || Office.context.platform.toString() == PlatformType.ANDROID) {
+  if (isMobileDevice()) {
     return await getOrganizerOnMobile(mailboxItem);
   } else {
     return await getOrganizer(mailboxItem);
@@ -172,10 +172,7 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
     console.error("Error during adding Wire meeting link", error);
     handleAddMeetingLinkError(error);
   } finally {
-    if (
-      Office.context.platform.toString() == PlatformType.IOS ||
-      Office.context.platform.toString() == PlatformType.ANDROID
-    ) {
+    if (isMobileDevice()) {
       await appendToBody(mailboxItem, ""); //Workaround for mobile devices - Without body gets removed
     }
     event.completed();
