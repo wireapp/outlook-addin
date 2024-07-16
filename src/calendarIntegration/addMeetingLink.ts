@@ -9,7 +9,6 @@ import { mailboxItem } from "../commands/commands";
 import { EventResult } from "../types/EventResult";
 import { PlatformType } from "../types/PlatformTypes";
 
-const defaultSubjectValue = "New Appointment";
 let createdMeeting: EventResult;
 
 /**
@@ -80,7 +79,7 @@ async function createNewMeeting(): Promise<void> {
   let subject = await getMailboxItemSubject(mailboxItem);
   subject = await modifyConversationName(subject);
 
-  const eventResult = await createEvent(subject || defaultSubjectValue);
+  const eventResult = await createEvent(subject);
 
   if (eventResult) {
     createdMeeting = eventResult;
