@@ -96,15 +96,6 @@
             </OfficeTab>
           </ExtensionPoint>
 
-          <!-- Enable launching the add-in on the included event. -->
-          <ExtensionPoint xsi:type="LaunchEvent">
-            <LaunchEvents>
-              <LaunchEvent Type="OnAppointmentSend" FunctionName="onAppointmentSendHandler" SendMode="PromptUser" />
-            </LaunchEvents>
-            <!-- Identifies the runtime to be used (also referenced by the Runtime element). -->
-            <SourceLocation resid="WebViewRuntime.Url"/>
-          </ExtensionPoint>
-
         </DesktopFormFactor>
         
         <MobileFormFactor>
@@ -159,10 +150,6 @@
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
       </bt:LongStrings>
     </Resources>
-    <!-- Configure the prepend-on-send or append-on-send feature using the AppendOnSend value. -->
-    <ExtendedPermissions>
-      <ExtendedPermission>AppendOnSend</ExtendedPermission>
-    </ExtendedPermissions>
   </VersionOverrides>
 </VersionOverrides>
 </OfficeApp>

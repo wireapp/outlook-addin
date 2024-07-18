@@ -7,7 +7,6 @@ import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled
 import { createEvent } from "./createEvent";
 import { mailboxItem } from "../commands/commands";
 import { EventResult } from "../types/EventResult";
-import { PlatformType } from "../types/PlatformTypes";
 
 let createdMeeting: EventResult;
 
@@ -171,10 +170,7 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
     console.error("Error during adding Wire meeting link", error);
     handleAddMeetingLinkError(error);
   } finally {
-    if (isMobileDevice()) {
-      await appendToBody(mailboxItem, ""); //Workaround for mobile devices - Without body gets removed
-    }
-    event.completed();
+    event.completed( { allowEvent: true } );
   }
 }
 
