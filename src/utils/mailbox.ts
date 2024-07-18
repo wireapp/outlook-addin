@@ -139,15 +139,4 @@ export async function setLocation(item, meetlingLink) {
     }
   });
 
-  if (isMobileDevice()) {
-    /* Workaround for mobile devices - sometimes location gets removed*/
-    let currentLocation = await getLocation(item);
-
-    location.setAsync(currentLocation + "", function (asyncResult) {
-      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
-        console.error(`Action failed with message ${asyncResult.error.message}`);
-        return;
-      }
-    });
-  }
 }
