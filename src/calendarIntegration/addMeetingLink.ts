@@ -169,7 +169,8 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
         const currentLocation = await getLocation(mailboxItem);
         const currentBody = await getBody(mailboxItem);
 
-        const wireInvitationString = "https://account.anta.wire.link/conversation-join/";
+        //Needs to be changed if the wire invitation string changes in future
+        const wireInvitationString = "/conversation-join/?key=";
 
         //In some cases the wire invitation link is still present in location after deactiving the addin on mobile, so we can check for it and reuse it.
         if (currentLocation.toString().includes(wireInvitationString) && !currentBody.includes(wireInvitationString)) {
