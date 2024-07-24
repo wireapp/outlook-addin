@@ -158,19 +158,39 @@ async function handleExistingMeeting(): Promise<void> {
 async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> {
   try {
     const isEnabled = await isFeatureEnabled();
-    if (!isEnabled) return;
+    if (!isEnabled) {
+      return;
+    }
 
     await fetchCustomProperties();
+
     if (!createdMeeting) {
-      await createNewMeeting();
+      if (isMobileDevice()) {
+        const currentLocation = await getLocation(mailboxItem);
+        const currentBody = await getBody(mailboxItem);
+
+        const wireInvitationString = "https://account.anta.wire.link/conversation-join/";
+
+        //In some cases the wire invitation link is still present in location after deactiving the addin on mobile, so we can check for it and reuse it.
+        if (currentLocation.toString().includes(wireInvitationString) && !currentBody.includes(wireInvitationString)) {
+          const organizer = await getPlatformSpecificOrganizer();
+          const meetingSummary = createMeetingSummary(currentLocation, organizer);
+          await appendToBody(mailboxItem, meetingSummary);
+        } else if (currentLocation.toString().includes(wireInvitationString)) {
+          return;
+        } else {
+          await createNewMeeting();
+        }
+      } else {
+        await createNewMeeting();
+      }
     } else {
       await handleExistingMeeting();
     }
   } catch (error) {
-    console.error("Error during adding Wire meeting link", error);
     handleAddMeetingLinkError(error);
   } finally {
-    event.completed( { allowEvent: true } );
+    event.completed({ allowEvent: true });
   }
 }
 
