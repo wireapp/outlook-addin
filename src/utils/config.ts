@@ -1,6 +1,3 @@
 /* global window */
 
-export const config = {
-  ...window.config,
-  apiVersion: window.config?.apiVersion || "v5",
-};
+export const config = window.config;
