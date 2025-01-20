@@ -80,6 +80,7 @@ function replaceEnvPlaceholders(content, outputPath) {
       .toString()
       .replace(/\${BASE_URL}/g, process.env.BASE_URL)
       .replace(/\${WIRE_API_BASE_URL}/g, process.env.WIRE_API_BASE_URL)
+      .replace(/\${WIRE_API_VERSION}/g, process.env.WIRE_API_VERSION ? process.env.WIRE_API_VERSION : "v5")
       .replace(/\${WIRE_AUTHORIZATION_ENDPOINT}/g, process.env.WIRE_AUTHORIZATION_ENDPOINT)
       .replace(/\${CLIENT_ID}/g, process.env.CLIENT_ID);
   }

@@ -3,7 +3,7 @@ import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
 import { SelfUser } from "../types/SelfUser";
 
 export async function getSelf(): Promise<SelfUser> {
-  const response = await fetchWithAuthorizeDialog(new URL("/self", config.apiBaseUrl), {
+  const response = await fetchWithAuthorizeDialog(new URL(`${config.apiVersion}/self`, config.apiBaseUrl), {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

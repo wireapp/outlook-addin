@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0" xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0" xsi:type="MailApp">
   <Id>50581182-7271-4e44-8aa7-63c432b46a3e</Id>
-  <Version>0.1.8</Version>
+  <Version>1.1.0</Version>
   <ProviderName>Wire</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Wire"/>
   <Description DefaultValue="Wire meeting integration for Outlook"/>
   <IconUrl DefaultValue="${BASE_URL}/assets/icon-64.png"/>
   <HighResolutionIconUrl DefaultValue="${BASE_URL}/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://support.wire.com" />
   <Hosts>
     <Host Name="Mailbox"/>
   </Hosts>
@@ -95,15 +96,6 @@
             </OfficeTab>
           </ExtensionPoint>
 
-          <!-- Enable launching the add-in on the included event. -->
-          <ExtensionPoint xsi:type="LaunchEvent">
-            <LaunchEvents>
-              <LaunchEvent Type="OnAppointmentSend" FunctionName="onAppointmentSendHandler" SendMode="PromptUser" />
-            </LaunchEvents>
-            <!-- Identifies the runtime to be used (also referenced by the Runtime element). -->
-            <SourceLocation resid="WebViewRuntime.Url"/>
-          </ExtensionPoint>
-
         </DesktopFormFactor>
         
         <MobileFormFactor>
@@ -158,10 +150,6 @@
         <bt:String id="TaskpaneButton.Tooltip" DefaultValue="Opens a pane displaying all available properties."/>
       </bt:LongStrings>
     </Resources>
-    <!-- Configure the prepend-on-send or append-on-send feature using the AppendOnSend value. -->
-    <ExtendedPermissions>
-      <ExtendedPermission>AppendOnSend</ExtendedPermission>
-    </ExtendedPermissions>
   </VersionOverrides>
 </VersionOverrides>
 </OfficeApp>

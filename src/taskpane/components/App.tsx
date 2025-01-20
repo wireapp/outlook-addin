@@ -56,7 +56,7 @@ export default class App extends React.Component<AppProps, AppState> {
 
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo={require("./../../../assets/logo-filled.png")} message="Loading in progress..." />
+        <Progress title={title} logo={require("./../../../assets/icon-128.png")} message="Loading in progress..." />
       );
     }
 
@@ -64,7 +64,7 @@ export default class App extends React.Component<AppProps, AppState> {
       <div className="ms-Grid">
       <div className="ms-Grid-row">
         <div className="ms-Grid-col">
-          <h1>Settings</h1>
+          <h3>Wire for Outlook</h3>
   
         {isLoggedIn && user ? <LoggedIn user={user} onLogout={this.logout} /> : <LoggedOut onLogin={this.login} />}
       </div>
