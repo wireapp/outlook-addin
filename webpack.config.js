@@ -203,6 +203,9 @@ module.exports = async (env, options) => {
     ],
     devServer: {
       hot: true,
+      devMiddleware: {
+        writeToDisk: (filePath) => path.basename(filePath) === "manifest.xml",
+      },
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
