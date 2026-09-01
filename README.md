@@ -2,23 +2,10 @@
 
 Wire add-in for Microsoft Outlook
 
-## Wire Staging Env
-```
-- name: BASE_URL
-value: https://outlook.integrations.zinfra.io
+## Configuration
 
-- name: WIRE_API_BASE_URL
-value: https://staging-nginz-https.zinfra.io
-
-- name: WIRE_API_VERSION
-value: v5
-
-- name: WIRE_AUTHORIZATION_ENDPOINT
-value: https://wire-webapp-qa.zinfra.io/auth
-
-- name: CLIENT_ID
-value: e30a9b94-8e0d-4b15-8a1a-236f68729cdd
-```
+The actual values for staging environment are provided in the [.env.staging](.env.staging) file.
+The actual values for the staging environment are provided in the [.env.staging](.env.staging) file.
 
 ## App Config
 ```
