@@ -37,8 +37,11 @@ The actual values for the staging environment are provided in the [.env.staging]
 ## Refresh token
 - Upon 401 Add-in will go to: POST [config.apiBaseUrl]/auth/refresh and body = LocalStorage.refresh_token
 
-## How to create new Service with the BE (Brig)
-```sh
+## How to create a new OAuth client
+
+When connected to the backend pod of the Brig service, run:
+
+```shell
 curl -s -X POST localhost:8080/i/oauth/clients \
     -H "Content-Type: application/json" \
     -d '{
@@ -46,6 +49,19 @@ curl -s -X POST localhost:8080/i/oauth/clients \
       "redirect_url":"https://outlook.wire.com/callback.html" 
     }'
 ```
+
+For testing purposes, on Staging environment it's also possible to call the same path via the public API hostname:
+
+```shell
+curl -s -X POST https://staging-nginz-https.zinfra.io/i/oauth/clients \
+    -H "Content-Type: application/json" \
+    -d '{
+      "application_name":"legacy-outlook-local",
+      "redirect_url":"https://localhost:8080/callback.html"
+    }'
+```
+
+In the latter case, the basic access authentication must be used in the `Authorization` header.
 
 ## How to install the Add-in in MS Outlook
 
