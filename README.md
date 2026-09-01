@@ -37,9 +37,6 @@ The actual values for the staging environment are provided in the [.env.staging]
 ## Refresh token
 - Upon 401 Add-in will go to: POST [config.apiBaseUrl]/auth/refresh and body = LocalStorage.refresh_token
 
-## Business Logic
-- 
-
 ## How to create new Service with the BE (Brig)
 ```agsl
 curl -s -X POST localhost:8080/i/oauth/clients \
