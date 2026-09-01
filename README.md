@@ -48,13 +48,25 @@ curl -s -X POST localhost:8080/i/oauth/clients \
 ```
 
 ## How to install the Add-in in MS Outlook
-- Open an email and go to 3 dots and select Get Add-ins
+
+- Get the manifest.xml file:
+  - Production:
+    ```shell
+    curl https://outlook.integrations.wire.com/manifest.xml > manifest.xml
+    ``` 
+  - Development:
+    ```shell
+    npm run dev-server-local
+    # file location: dist/manifest.xml
+    ```
+- Open an email and go to three dots and select Get Add-ins
 ![Step 1](images/step_1.png)
-- Go to My Add-ins, Custom Add-ins, Add a Custom Add-in
+- Go to My Add-ins, Custom Add-ins, **Add a Custom Add-in**
 ![Step 2](images/step_2.png)
-- Pick up a URL and add: https://outlook.integrations.wire.com/manifest.xml
+- Choose **Add from File**.
 ![Step 3](images/step_3.png)
-Wire button will appear in the toolbar when new event is being created
+
+Wire button will appear in the toolbar when a new event is being created
 
 ## Troubleshooting
 - If you are getting `401` error, please make sure that you have enabled the feature flag `outlookCalIntegration` for your account.
