@@ -3,28 +3,23 @@
 Wire add-in for Microsoft Outlook
 
 ## Configuration
+The program is configured through environment variables listed in the [.env.template](.env.template) file.  
+Depending on the deployment mode, the values are substituted differently:
+- development – at built time via Webpack plugin;
+- production – at container startup via a Docker entrypoint script using `envsubst` command.
 
-The actual values for staging environment are provided in the [.env.staging](.env.staging) file.
+The [manifest.xml](manifest.xml.template) file describes the Office Add-in (its name, permissions, and endpoints), 
+while [config.js](./src/config.js.template) provides the app with runtime configuration such as API URLs and client IDs.
+
 The actual values for the staging environment are provided in the [.env.staging](.env.staging) file.
 
-## App Config
-```
-window.config = {
-  addInBaseUrl: "${BASE_URL}",
-  apiBaseUrl: "${WIRE_API_BASE_URL}",
-  apiVersion: "${WIRE_API_VERSION}",
-  authorizeUrl: "${WIRE_AUTHORIZATION_ENDPOINT}",
-  clientId: "${CLIENT_ID}",
-};
-```
+### Feature flag
+`outlookCalIntegration` – Must be enabled to be able to create a group and the link.
 
 ## Local Storage
 - isLoggedIn
 - refresh_token
 - access_token
-
-## Feature flag
- - `outlookCalIntegration` - Must be enabled in order to be able to create a group and the link.
 
 ## Authorize
 - URL: [config.authorizeUrl]
