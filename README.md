@@ -17,8 +17,6 @@ window.config = {
   clientId: "${CLIENT_ID}",
 };
 ```
-## API Version
-The WIRE_API_VERSION environment variable can be optionally set to define the API version for the application. If not explicitly set, the default value of 'v5' will be used.
 
 ## Local Storage
 - isLoggedIn
