@@ -87,3 +87,8 @@ Wire button will appear in the toolbar when a new event is being created
 ## Troubleshooting
 - If you are getting `401` error, please make sure that you have enabled the feature flag `outlookCalIntegration` for your account.
 - If your browser is blocking third-party cookies, please make sure to allow them for the add-in to work properly. Or you can add `https://outlook.office.com` to the list of allowed websites.
+- For local development the add-in requires HTTPS and uses a self-signed certificate.
+If the add-in does not load, open the following URL in your browser:  
+https://localhost:3000/commands.html?et=  
+If your browser displays a certificate warning, accept or trust the certificate, then reload Outlook and try again.
+
