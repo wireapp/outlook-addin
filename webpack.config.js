@@ -7,6 +7,12 @@ const webpack = require("webpack");
 const path = require("path");
 const dotenv = require("dotenv");
 const fs = require("fs");
+const devCerts = require("office-addin-dev-certs");
+
+async function getHttpsOptions() {
+  const httpsOptions = await devCerts.getHttpsServerOptions();
+  return { ca: httpsOptions.ca, key: httpsOptions.key, cert: httpsOptions.cert };
+}
 
 const plugins = [
   new CopyWebpackPlugin({
@@ -197,16 +203,16 @@ module.exports = async (env, options) => {
     ],
     devServer: {
       hot: true,
+      devMiddleware: {
+        writeToDisk: (filePath) => path.basename(filePath) === "manifest.xml",
+      },
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      https:
-        fs.existsSync("./devcert/development-key.pem") && fs.existsSync("./devcert/development-cert.pem")
-          ? {
-              key: fs.readFileSync("./devcert/development-key.pem"),
-              cert: fs.readFileSync("./devcert/development-cert.pem"),
-            }
-          : false,
+      server: {
+        type: "https",
+        options: env.WEBPACK_BUILD || options.https !== undefined ? options.https : await getHttpsOptions(),
+      },
       host,
       port: port || 8080,
     },

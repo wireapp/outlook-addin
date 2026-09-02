@@ -2,44 +2,24 @@
 
 Wire add-in for Microsoft Outlook
 
-## Wire Staging Env
-```
-- name: BASE_URL
-value: https://outlook.integrations.zinfra.io
+## Configuration
+The program is configured through environment variables listed in the [.env.template](.env.template) file.  
+Depending on the deployment mode, the values are substituted differently:
+- development – at built time via Webpack plugin;
+- production – at container startup via a Docker entrypoint script using `envsubst` command.
 
-- name: WIRE_API_BASE_URL
-value: https://staging-nginz-https.zinfra.io
+The [manifest.xml](manifest.xml.template) file describes the Office Add-in (its name, permissions, and endpoints), 
+while [config.js](./src/config.js.template) provides the app with runtime configuration such as API URLs and client IDs.
 
-- name: WIRE_API_VERSION
-value: v5
+The actual values for the staging environment are provided in the [.env.staging](.env.staging) file.
 
-- name: WIRE_AUTHORIZATION_ENDPOINT
-value: https://wire-webapp-qa.zinfra.io/auth
-
-- name: CLIENT_ID
-value: e30a9b94-8e0d-4b15-8a1a-236f68729cdd
-```
-
-## App Config
-```
-window.config = {
-  addInBaseUrl: "${BASE_URL}",
-  apiBaseUrl: "${WIRE_API_BASE_URL}",
-  apiVersion: "${WIRE_API_VERSION}",
-  authorizeUrl: "${WIRE_AUTHORIZATION_ENDPOINT}",
-  clientId: "${CLIENT_ID}",
-};
-```
-## API Version
-The WIRE_API_VERSION environment variable can be optionally set to define the API version for the application. If not explicitly set, the default value of 'v5' will be used.
+### Feature flag
+`outlookCalIntegration` – Must be enabled to be able to create a group and the link.
 
 ## Local Storage
 - isLoggedIn
 - refresh_token
 - access_token
-
-## Feature flag
- - `outlookCalIntegration` - Must be enabled in order to be able to create a group and the link.
 
 ## Authorize
 - URL: [config.authorizeUrl]
@@ -57,11 +37,13 @@ The WIRE_API_VERSION environment variable can be optionally set to define the AP
 ## Refresh token
 - Upon 401 Add-in will go to: POST [config.apiBaseUrl]/auth/refresh and body = LocalStorage.refresh_token
 
-## Business Logic
-- 
+## How to create a new OAuth client
 
-## How to create new Service with the BE (Brig)
-```agsl
+When available, use Backoffice. For example, the corresponding endpoint for Staging private API is located at https://staging-backoffice.ops.zinfra.io/swagger-ui/index.html#/default/register-oauth-client
+
+Otherwise, connect to the backend pod of the Brig service and run:
+
+```shell
 curl -s -X POST localhost:8080/i/oauth/clients \
     -H "Content-Type: application/json" \
     -d '{
@@ -71,14 +53,31 @@ curl -s -X POST localhost:8080/i/oauth/clients \
 ```
 
 ## How to install the Add-in in MS Outlook
-- Open an email and go to 3 dots and select Get Add-ins
+
+- Get the manifest.xml file:
+  - Production:
+    ```shell
+    curl https://outlook.integrations.wire.com/manifest.xml > manifest.xml
+    ``` 
+  - Development:
+    ```shell
+    npm run dev-server-local
+    # file location: dist/manifest.xml
+    ```
+- Open an email and go to three dots and select Get Add-ins
 ![Step 1](images/step_1.png)
-- Go to My Add-ins, Custom Add-ins, Add a Custom Add-in
+- Go to My Add-ins, Custom Add-ins, **Add a Custom Add-in**
 ![Step 2](images/step_2.png)
-- Pick up a URL and add: https://outlook.integrations.wire.com/manifest.xml
+- Choose **Add from File**.
 ![Step 3](images/step_3.png)
-Wire button will appear in the toolbar when new event is being created
+
+Wire button will appear in the toolbar when a new event is being created
 
 ## Troubleshooting
 - If you are getting `401` error, please make sure that you have enabled the feature flag `outlookCalIntegration` for your account.
 - If your browser is blocking third-party cookies, please make sure to allow them for the add-in to work properly. Or you can add `https://outlook.office.com` to the list of allowed websites.
+- For local development the add-in requires HTTPS and uses a self-signed certificate.
+If the add-in does not load, open the following URL in your browser:  
+https://localhost:3000/commands.html?et=  
+If your browser displays a certificate warning, accept or trust the certificate, then reload Outlook and try again.
+
