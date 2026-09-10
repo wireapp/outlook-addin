@@ -1,6 +1,6 @@
 /* global console */
 
-import { FeatureConfigsResponse, Feature } from "../types/FeatureConfigsResponse";
+import type { FeatureConfigsResponse, Feature } from "../types/FeatureConfigsResponse";
 import { config } from "../utils/config";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
 

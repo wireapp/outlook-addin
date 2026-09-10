@@ -1,6 +1,6 @@
 /* global console */
 
-import { EventResult } from "../types/EventResult";
+import type { EventResult } from "../types/EventResult";
 import { config } from "../utils/config";
 import { getTeamId } from "./getSelf";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";

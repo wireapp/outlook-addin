@@ -1,5 +1,5 @@
 /* global localStorage */
-import { SelfUser } from "../types/SelfUser";
+import type { SelfUser } from "../types/SelfUser";
 
 export const setUserDetails = (user: SelfUser) => {
   localStorage.setItem("user", JSON.stringify(user));
