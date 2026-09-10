@@ -1,6 +1,6 @@
 import * as React from "react";
 import { DefaultButton } from "@fluentui/react";
-import { SelfUser } from "../../types/SelfUser";
+import type { SelfUser } from "../../types/SelfUser";
 
 interface LoggedInProps {
   user: SelfUser | null;
