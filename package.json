@@ -29,24 +29,24 @@
     "watch": "webpack --mode development --watch"
   },
   "dependencies": {
-    "@fluentui/react": "^8.109.3",
+    "@fluentui/react-components": "^9.55.1",
     "core-js": "^3.36.0",
     "dotenv": "^16.0.3",
     "es6-promise": "^4.2.8",
     "jwt-decode": "^3.1.2",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
     "@babel/core": "^8.0.1",
     "@babel/preset-env": "^8.0.2",
     "@babel/preset-typescript": "^8.0.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.3",
     "@types/office-js": "^1.0.377",
     "@types/office-runtime": "^1.0.35",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
-    "@types/react-hot-loader": "^4.1.1",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
     "@types/webpack": "^5.28.5",
     "@types/webpack-dev-server": "^4.7.1",
     "acorn": "^8.11.3",
@@ -68,6 +68,7 @@
     "office-addin-prettier-config": "^2.0.5",
     "os-browserify": "^0.3.0",
     "process": "^0.11.10",
+    "react-refresh": "^0.19.0",
     "source-map-loader": "^4.0.1",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.2",
@@ -77,8 +78,7 @@
   },
   "prettier": "office-addin-prettier-config",
   "browserslist": [
-    "last 2 versions",
-    "ie 11"
+    "last 2 versions"
   ],
   "engines": {
     "node": ">=24.11.0"

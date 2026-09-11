@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DefaultButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
 import type { SelfUser } from "../../types/SelfUser";
 
 interface LoggedInProps {
@@ -15,7 +15,7 @@ const LoggedIn: React.FC<LoggedInProps> = ({ user, onLogout }) => (
       Username: {user.handle}<br/>
       E-mail: {user.email}<br/>
       <br/>
-      <DefaultButton onClick={onLogout}>Disconnect Add-in</DefaultButton>
+      <Button onClick={onLogout}>Disconnect Add-in</Button>
   </div>
 );
 
