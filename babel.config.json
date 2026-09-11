@@ -10,5 +10,11 @@
     ],
     "@babel/preset-typescript"
   ],
-  "plugins": ["react-hot-loader/babel"]
+  "env": {
+    "development": {
+      "plugins": [
+        "react-refresh/babel"
+      ]
+    }
+  }
 }
