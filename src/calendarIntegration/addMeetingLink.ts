@@ -6,7 +6,7 @@ import { showNotification, removeNotification } from "../utils/notifications";
 import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled";
 import { createEvent } from "./createEvent";
 import { mailboxItem } from "../commands/commands";
-import { EventResult } from "../types/EventResult";
+import type { EventResult } from "../types/EventResult";
 
 let createdMeeting: EventResult;
 

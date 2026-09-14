@@ -1,7 +1,7 @@
 /* global Office, window, document, console, fetch, sessionStorage */
 
-import { AuthResult } from "../types/AuthResult";
-import { UrlParameters } from "./UrlParameters";
+import type { AuthResult } from "../types/AuthResult";
+import type { UrlParameters } from "./UrlParameters";
 import { config } from "../utils/config";
 
 document.addEventListener(

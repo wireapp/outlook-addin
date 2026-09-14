@@ -3,10 +3,10 @@
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackTagsPlugin = require("html-webpack-tags-plugin");
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const webpack = require("webpack");
 const path = require("path");
 const dotenv = require("dotenv");
-const fs = require("fs");
 const devCerts = require("office-addin-dev-certs");
 
 async function getHttpsOptions() {
@@ -39,7 +39,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     filename: "taskpane.html",
     template: "./src/taskpane/taskpane.html",
-    chunks: ["taskpane", "vendor", "polyfills"],
+    chunks: ["taskpane", "react", "polyfills"],
     scriptLoading: "blocking",
     inject: "head",
   }),
@@ -152,8 +152,11 @@ module.exports = async (env, options) => {
     devtool: "source-map",
     entry: {
       polyfill: ["core-js/stable", "regenerator-runtime/runtime"],
-      vendor: ["react", "react-dom", "core-js", "@fluentui/react"],
-      taskpane: ["react-hot-loader/patch", "./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
+      react: ["react", "react-dom"],
+      taskpane: {
+        import: ["./src/taskpane/index.tsx", "./src/taskpane/taskpane.html"],
+        dependOn: "react",
+      },
       commands: "./src/commands/commands.ts",
       authorize: "./src/authorize/authorize.ts",
       callback: "./src/callback/callback.ts",
@@ -172,9 +175,6 @@ module.exports = async (env, options) => {
           exclude: /node_modules/,
           use: {
             loader: "babel-loader",
-            options: {
-              presets: ["@babel/preset-typescript"],
-            },
           },
         },
         {
@@ -199,6 +199,7 @@ module.exports = async (env, options) => {
     plugins: [
       ...(isDevelopmentMode ? [new webpack.DefinePlugin(envKeys)] : []),
       ...(isDevelopmentMode ? pluginsDev : pluginsDocker),
+      ...((isDevelopmentMode && env.WEBPACK_SERVE) ? [new ReactRefreshWebpackPlugin()] : []),
       ...plugins,
     ],
     devServer: {

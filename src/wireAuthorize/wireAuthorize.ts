@@ -1,9 +1,9 @@
 /* global Office, console, fetch */
 
-import { AuthResult } from "../types/AuthResult";
+import type { AuthResult } from "../types/AuthResult";
 import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "../utils/tokenStore";
 import jwt_decode from "jwt-decode";
-import { DecodedToken } from "../types/DecodedToken";
+import type { DecodedToken } from "../types/DecodedToken";
 import { config } from "../utils/config";
 import { showNotification, removeNotification } from "../utils/notifications";
 import { setUserDetails, removeUserDetails } from "../utils/userDetailsStore";

@@ -4,9 +4,8 @@ import LoggedIn from "./LoggedIn";
 import LoggedOut from "./LoggedOut";
 import { authorizeDialog, revokeOauthToken } from "../../wireAuthorize/wireAuthorize";
 import { removeTokens } from "../../utils/tokenStore";
-import { setUserDetails, removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
-import { getSelf } from "../../calendarIntegration/getSelf";
-import { SelfUser } from "../../types/SelfUser";
+import { removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
+import type { SelfUser } from "../../types/SelfUser";
 
 export interface AppProps {
   title: string;
