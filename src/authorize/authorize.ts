@@ -1,6 +1,5 @@
 /* global document, window, sessionStorage */
 
-import * as CryptoJS from "crypto-js";
 import { config } from "../utils/config";
 
 document.addEventListener("DOMContentLoaded", redirectToAuthorize, false);
@@ -38,11 +37,25 @@ function generateCodeVerifier(): string {
   return generateRandomHexString(64);
 }
 
-async function generateCodeChallenge(codeVerifier: string): Promise<string> {
-  const hash = CryptoJS.SHA256(codeVerifier);
-  const base64Url = hash.toString(CryptoJS.enc.Base64url);
+async function digestMessage(message: string): Promise<ArrayBuffer> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(message);
+  const hash = await window.crypto.subtle.digest("SHA-256", data);
+  return hash;
+}
 
-  return base64Url;
+function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
+  const uint8Array = new Uint8Array(buffer);
+  const binaryString = Array.from(uint8Array)
+    .map((byte) => String.fromCodePoint(byte))
+    .join("");
+  const base64EncodedString = window.btoa(binaryString);
+  const base64URLEncodedString = base64EncodedString.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return base64URLEncodedString;
+}
+
+async function generateCodeChallenge(codeVerifier: string): Promise<string> {
+  return arrayBufferToBase64URL(await digestMessage(codeVerifier));
 }
 
 function generateRandomHexString(length: number): string {

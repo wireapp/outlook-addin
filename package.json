@@ -29,7 +29,6 @@
   "dependencies": {
     "@fluentui/react": "^8.109.3",
     "core-js": "^3.30.2",
-    "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "es6-promise": "^4.2.8",
     "jwt-decode": "^3.1.2",
@@ -40,7 +39,6 @@
   "devDependencies": {
     "@babel/core": "^7.21.8",
     "@babel/preset-typescript": "^7.21.5",
-    "@types/crypto-js": "^4.1.1",
     "@types/office-js": "^1.0.323",
     "@types/office-runtime": "^1.0.30",
     "@types/react": "^17.0.39",
