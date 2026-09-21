@@ -46,14 +46,11 @@ async function digestMessage(message: string): Promise<ArrayBuffer> {
 
 function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
   const uint8Array = new Uint8Array(buffer);
-  const binaryString = [...uint8Array.values()]
+  const binaryString = Array.from(uint8Array)
     .map((byte) => String.fromCodePoint(byte))
     .join("");
-  const base64EncodedString = btoa(binaryString);
-  const base64URLEncodedString = base64EncodedString
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
+  const base64EncodedString = window.btoa(binaryString);
+  const base64URLEncodedString = base64EncodedString.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
   return base64URLEncodedString;
 }
 
