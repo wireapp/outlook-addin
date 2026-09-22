@@ -39,7 +39,7 @@ const plugins = [
   new HtmlWebpackPlugin({
     filename: "taskpane.html",
     template: "./src/taskpane/taskpane.html",
-    chunks: ["taskpane", "react", "polyfills"],
+    chunks: ["taskpane", "react", "polyfill"],
     scriptLoading: "blocking",
     inject: "head",
   }),

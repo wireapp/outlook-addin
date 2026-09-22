@@ -23,13 +23,16 @@ export async function createEvent(name: string): Promise<EventResult> {
       },
     };
 
-    const response = await fetchWithAuthorizeDialog(new URL(`${config.apiVersion}/conversations`, config.apiBaseUrl), {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    const response = await fetchWithAuthorizeDialog(
+      new URL(`${config.apiVersion}/conversations`, config.apiBaseUrl),
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    );
 
     if (response.ok) {
       const conversationId = (await response.json()).id;
@@ -41,7 +44,7 @@ export async function createEvent(name: string): Promise<EventResult> {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ password: null}),
+          body: JSON.stringify({ password: null }),
         }
       ).then((r) => r.json());
 

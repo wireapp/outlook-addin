@@ -50,7 +50,10 @@ function arrayBufferToBase64URL(buffer: ArrayBuffer): string {
     .map((byte) => String.fromCodePoint(byte))
     .join("");
   const base64EncodedString = window.btoa(binaryString);
-  const base64URLEncodedString = base64EncodedString.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const base64URLEncodedString = base64EncodedString
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
   return base64URLEncodedString;
 }
 

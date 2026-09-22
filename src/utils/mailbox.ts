@@ -32,13 +32,17 @@ export async function getOrganizer(item): Promise<string> {
 
 export async function getOrganizerOnMobile(item) {
   return new Promise((resolve, reject) => {
-    item.body.getAsync("html", { asyncContext: Office.context.mailbox.userProfile.displayName }, (result) => {
-      if (result.status === Office.AsyncResultStatus.Succeeded) {
-        resolve(result.asyncContext);
-      } else {
-        reject(new Error("Failed to get body."));
+    item.body.getAsync(
+      "html",
+      { asyncContext: Office.context.mailbox.userProfile.displayName },
+      (result) => {
+        if (result.status === Office.AsyncResultStatus.Succeeded) {
+          resolve(result.asyncContext);
+        } else {
+          reject(new Error("Failed to get body."));
+        }
       }
-    });
+    );
   });
 }
 
@@ -125,7 +129,8 @@ export async function getLocation(item) {
 }
 export function isMobileDevice() {
   return (
-    Office.context.platform.toString() == PlatformType.IOS || Office.context.platform.toString() == PlatformType.ANDROID
+    Office.context.platform.toString() == PlatformType.IOS ||
+    Office.context.platform.toString() == PlatformType.ANDROID
   );
 }
 
@@ -138,5 +143,4 @@ export async function setLocation(item, meetlingLink) {
       return;
     }
   });
-
 }

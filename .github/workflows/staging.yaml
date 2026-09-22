@@ -2,13 +2,15 @@ name: Image Build
 
 on:
   push:
+    branches:
+      - staging
 
 env:
   DOCKER_IMAGE: quay.io/wire/outlook-addin
 jobs:
   publish:
     name: Build and Push to Quay
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
 

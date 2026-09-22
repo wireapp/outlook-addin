@@ -3,6 +3,7 @@ export function createMeetingSummary(groupInviteLink, organizer) {
   const fullInvite = `<div>
     <p>${organizer} is inviting you to join this meeting in Wire.</p>
     <p>Join meeting in Wire <a href="${groupInviteLink}">${groupInviteLink}</a></p>
+    <br />
     <p><a href="${wireDownloadLink}">Download Wire</a></p>
   </div>`;
 

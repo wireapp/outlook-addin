@@ -7,9 +7,10 @@ interface LoggedOutProps {
 
 const LoggedOut: React.FC<LoggedOutProps> = ({ onLogin }) => (
   <div>
-      Please log in to Wire:<br/>
-      <br/>
-      <Button onClick={onLogin}>Log in</Button>
+    Please log in to Wire:
+    <br />
+    <br />
+    <Button onClick={onLogin}>Log in</Button>
   </div>
 );
 

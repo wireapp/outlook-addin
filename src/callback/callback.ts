@@ -85,7 +85,12 @@ async function exchangeCodeForTokens(code: string, codeVerifier: string): Promis
   }
 }
 
-function getRequestBody(code: string, clientId: string, redirectUri: URL, codeVerifier: string): URLSearchParams {
+function getRequestBody(
+  code: string,
+  clientId: string,
+  redirectUri: URL,
+  codeVerifier: string
+): URLSearchParams {
   const body = new URLSearchParams();
   body.append("grant_type", "authorization_code");
   body.append("client_id", clientId);
