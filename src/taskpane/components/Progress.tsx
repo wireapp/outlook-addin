@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Spinner, SpinnerSize } from "@fluentui/react";
+import { Spinner } from "@fluentui/react-components";
 
 export interface ProgressProps {
   logo: string;
@@ -15,7 +15,7 @@ export default class Progress extends React.Component<ProgressProps> {
       <section className="ms-welcome__progress ms-u-fadeIn500">
         <img width="90" height="90" src={logo} alt={title} title={title} />
         <h1 className="ms-fontSize-su ms-fontWeight-light ms-fontColor-neutralPrimary">{title}</h1>
-        <Spinner size={SpinnerSize.large} label={message} />
+        <Spinner size="large" label={message} />
       </section>
     );
   }

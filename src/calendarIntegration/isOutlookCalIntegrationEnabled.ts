@@ -1,17 +1,20 @@
 /* global console */
 
-import { FeatureConfigsResponse, Feature } from "../types/FeatureConfigsResponse";
+import type { FeatureConfigsResponse, Feature } from "../types/FeatureConfigsResponse";
 import { config } from "../utils/config";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
 
 export async function isOutlookCalIntegrationEnabled() {
   try {
-    const response = await fetchWithAuthorizeDialog(new URL(`${config.apiVersion}/feature-configs`, config.apiBaseUrl), {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetchWithAuthorizeDialog(
+      new URL(`${config.apiVersion}/feature-configs`, config.apiBaseUrl),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     if (response.ok) {
       const data: FeatureConfigsResponse = await response.json();

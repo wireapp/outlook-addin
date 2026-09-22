@@ -1,15 +1,18 @@
 /* global Office, console, fetch */
 
-import { AuthResult } from "../types/AuthResult";
+import type { AuthResult } from "../types/AuthResult";
 import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "../utils/tokenStore";
 import jwt_decode from "jwt-decode";
-import { DecodedToken } from "../types/DecodedToken";
+import type { DecodedToken } from "../types/DecodedToken";
 import { config } from "../utils/config";
 import { showNotification, removeNotification } from "../utils/notifications";
 import { setUserDetails, removeUserDetails } from "../utils/userDetailsStore";
 import { getSelf } from "../calendarIntegration/getSelf";
 
-export async function fetchWithAuthorizeDialog(url: string | URL, options: RequestInit): Promise<Response> {
+export async function fetchWithAuthorizeDialog(
+  url: string | URL,
+  options: RequestInit
+): Promise<Response> {
   try {
     let isAuthenticated = isLoggedIn();
 
@@ -97,23 +100,65 @@ export function authorizeDialog(): Promise<boolean> {
           resolve(false);
         } else {
           const dialog = asyncResult.value;
+          let completed = false;
+          let processingMessage = false;
+
+          const finish = (success: boolean, closeDialog = true) => {
+            if (completed) {
+              return;
+            }
+            completed = true;
+
+            try {
+              if (!success) {
+                removeTokens();
+                removeUserDetails();
+              }
+              if (closeDialog) {
+                dialog.close();
+              }
+            } catch (error) {
+              console.error("dialog cleanup failed: ", error);
+            } finally {
+              resolve(success);
+            }
+          };
+
+          dialog.addEventHandler(Office.EventType.DialogEventReceived, () => {
+            finish(false, false);
+          });
           dialog.addEventHandler(
             Office.EventType.DialogMessageReceived,
             async (messageEvent: Office.DialogParentMessageReceivedEventArgs) => {
-              const authResult = JSON.parse(messageEvent.message) as AuthResult;
+              if (completed || processingMessage) {
+                return;
+              }
+              processingMessage = true;
 
-              if (authResult.success) {
+              try {
+                const authResult = JSON.parse(messageEvent.message) as AuthResult;
+                if (
+                  authResult?.success !== true ||
+                  typeof authResult.access_token !== "string" ||
+                  !authResult.access_token ||
+                  (authResult.refresh_token != null && typeof authResult.refresh_token !== "string")
+                ) {
+                  finish(false);
+                  return;
+                }
+
                 setTokens(authResult.access_token, authResult.refresh_token);
                 const user = await getSelf();
+                // The dialog may have been closed while the request was pending.
+                if (completed) {
+                  return;
+                }
                 setUserDetails(user);
-                resolve(true);
-              } else {
-                removeTokens();
-                removeUserDetails();
-                resolve(false);
+                finish(true);
+              } catch (error) {
+                console.error("dialog authorization failed: ", error);
+                finish(false);
               }
-
-              dialog.close();
             }
           );
         }
@@ -199,7 +244,7 @@ export function isTokenValid(token: string): boolean {
   let result: boolean;
   try {
     result = decodedToken.exp * 1000 > new Date().getTime();
-  } catch (err) {
+  } catch {
     console.error("isTokenValid: error checking token validity");
     return false;
   }

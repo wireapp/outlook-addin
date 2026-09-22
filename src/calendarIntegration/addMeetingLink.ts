@@ -1,12 +1,21 @@
-
-import { appendToBody, getBody, getLocation, getMailboxItemSubject, getMeetingTime, getOrganizer, getOrganizerOnMobile, isMobileDevice, setLocation } from "../utils/mailbox";
+import {
+  appendToBody,
+  getBody,
+  getLocation,
+  getMailboxItemSubject,
+  getMeetingTime,
+  getOrganizer,
+  getOrganizerOnMobile,
+  isMobileDevice,
+  setLocation,
+} from "../utils/mailbox";
 import { createMeetingSummary } from "./createMeetingSummary";
 import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customProperties";
 import { showNotification, removeNotification } from "../utils/notifications";
 import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled";
 import { createEvent } from "./createEvent";
 import { mailboxItem } from "../commands/commands";
-import { EventResult } from "../types/EventResult";
+import type { EventResult } from "../types/EventResult";
 
 let createdMeeting: EventResult;
 
@@ -19,7 +28,9 @@ async function isFeatureEnabled(): Promise<boolean> {
   const isEnabled = await isOutlookCalIntegrationEnabled();
 
   if (!isEnabled) {
-    console.log("Outlook calendar integration is disabled for this team. Contact your Wire system administrator.");
+    console.log(
+      "Outlook calendar integration is disabled for this team. Contact your Wire system administrator."
+    );
     removeNotification("wire-for-outlook-disabled");
     showNotification(
       "wire-for-outlook-disabled",
@@ -54,11 +65,12 @@ async function fetchCustomProperties(): Promise<void> {
 async function modifyConversationName(conversationSubject: string): Promise<string> {
   const meetingDate = await getMeetingTime(mailboxItem);
 
-  const modifiedSubject = conversationSubject ? `CLDR:: ${conversationSubject}` : `CLDR:: ${meetingDate}`;
+  const modifiedSubject = conversationSubject
+    ? `CLDR:: ${conversationSubject}`
+    : `CLDR:: ${meetingDate}`;
 
   return modifiedSubject;
 }
-
 
 /**
  * Creates a new meeting by calling the createEvent function with a subject obtained from the mailboxItem.
@@ -89,7 +101,6 @@ async function createNewMeeting(): Promise<void> {
 
   removeNotification("adding-wire-meeting");
 }
-
 
 /**
  * Retrieves the platform-specific organizer for the current mailbox item.
@@ -129,7 +140,6 @@ async function handleExistingMeeting(): Promise<void> {
   }
 
   const currentBody = await getBody(mailboxItem);
-  const currentSubject = await getMailboxItemSubject(mailboxItem);
   const currentLocation = await getLocation(mailboxItem);
   const normalizedCurrentBody = currentBody.replace(/&amp;/g, "&");
   const normalizedMeetingLink = createdMeeting.link?.replace(/&amp;/g, "&");
@@ -140,7 +150,6 @@ async function handleExistingMeeting(): Promise<void> {
     await setLocation(mailboxItem, createdMeeting.link);
   }
 
-  
   if (!normalizedCurrentBody.includes(normalizedMeetingLink)) {
     await appendToBody(mailboxItem, meetingSummary);
   }
@@ -173,7 +182,10 @@ async function addMeetingLink(event: Office.AddinCommands.Event): Promise<void> 
         const wireInvitationString = "/conversation-join/?key=";
 
         //In some cases the wire invitation link is still present in location after deactiving the addin on mobile, so we can check for it and reuse it.
-        if (currentLocation.toString().includes(wireInvitationString) && !currentBody.includes(wireInvitationString)) {
+        if (
+          currentLocation.toString().includes(wireInvitationString) &&
+          !currentBody.includes(wireInvitationString)
+        ) {
           const organizer = await getPlatformSpecificOrganizer();
           const meetingSummary = createMeetingSummary(currentLocation, organizer);
           await appendToBody(mailboxItem, meetingSummary);

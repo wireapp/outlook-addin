@@ -16,6 +16,13 @@ while [config.js](./src/config.js.template) provides the app with runtime config
 
 The actual values for the staging environment are provided in the [.env.staging](.env.staging) file.
 
+## Configuration
+The project needs a running web-server to serve the add-in's HTML and JavaScript files.
+The server must be reachable from Outlook, so it must have a public URL.
+
+Currently it is running in AWS, this project just deploys to Quay.io, while [cailleach]([https://ops.zinfra.io/](https://github.com/zinfra/cailleach/blob/ad459f23622d7ad003bc84c03e407dab27905ced/tf-modules/k8s-outlook-addin/README.md))
+actually deploys to AWS the image.
+
 ### Feature flag
 `outlookCalIntegration` – Must be enabled to be able to create a group and the link.
 

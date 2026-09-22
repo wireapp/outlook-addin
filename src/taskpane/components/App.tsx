@@ -4,9 +4,8 @@ import LoggedIn from "./LoggedIn";
 import LoggedOut from "./LoggedOut";
 import { authorizeDialog, revokeOauthToken } from "../../wireAuthorize/wireAuthorize";
 import { removeTokens } from "../../utils/tokenStore";
-import { setUserDetails, removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
-import { getSelf } from "../../calendarIntegration/getSelf";
-import { SelfUser } from "../../types/SelfUser";
+import { removeUserDetails, getUserDetails } from "../../utils/userDetailsStore";
+import type { SelfUser } from "../../types/SelfUser";
 
 export interface AppProps {
   title: string;
@@ -56,19 +55,27 @@ export default class App extends React.Component<AppProps, AppState> {
 
     if (!isOfficeInitialized) {
       return (
-        <Progress title={title} logo={require("./../../../assets/icon-128.png")} message="Loading in progress..." />
+        <Progress
+          title={title}
+          logo={require("./../../../assets/icon-128.png")}
+          message="Loading in progress..."
+        />
       );
     }
 
     return (
       <div className="ms-Grid">
-      <div className="ms-Grid-row">
-        <div className="ms-Grid-col">
-          <h3>Wire for Outlook</h3>
-  
-        {isLoggedIn && user ? <LoggedIn user={user} onLogout={this.logout} /> : <LoggedOut onLogin={this.login} />}
-      </div>
-      </div>
+        <div className="ms-Grid-row">
+          <div className="ms-Grid-col">
+            <h3>Wire for Outlook</h3>
+
+            {isLoggedIn && user ? (
+              <LoggedIn user={user} onLogout={this.logout} />
+            ) : (
+              <LoggedOut onLogin={this.login} />
+            )}
+          </div>
+        </div>
       </div>
     );
   }

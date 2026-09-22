@@ -1,14 +1,17 @@
 import { config } from "../utils/config";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
-import { SelfUser } from "../types/SelfUser";
+import type { SelfUser } from "../types/SelfUser";
 
 export async function getSelf(): Promise<SelfUser> {
-  const response = await fetchWithAuthorizeDialog(new URL(`${config.apiVersion}/self`, config.apiBaseUrl), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((r) => r.json());
+  const response = await fetchWithAuthorizeDialog(
+    new URL(`${config.apiVersion}/self`, config.apiBaseUrl),
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  ).then((r) => r.json());
 
   const user: SelfUser = {
     email: response.email,

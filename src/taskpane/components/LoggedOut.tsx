@@ -1,5 +1,5 @@
 import * as React from "react";
-import { DefaultButton } from "@fluentui/react";
+import { Button } from "@fluentui/react-components";
 
 interface LoggedOutProps {
   onLogin: () => void;
@@ -7,9 +7,10 @@ interface LoggedOutProps {
 
 const LoggedOut: React.FC<LoggedOutProps> = ({ onLogin }) => (
   <div>
-      Please log in to Wire:<br/>
-      <br/>
-      <DefaultButton onClick={onLogin}>Log in</DefaultButton>
+    Please log in to Wire:
+    <br />
+    <br />
+    <Button onClick={onLogin}>Log in</Button>
   </div>
 );
 
