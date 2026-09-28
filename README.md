@@ -5,6 +5,14 @@ Wire add-in for Microsoft Outlook. It creates a Wire conversation and adds its i
 Outlook loads the add-in's HTML and JavaScript from a web server using the URLs in its manifest.
 For local development, Webpack serves these files over HTTPS. In production, a deployed Nginx container serves the built files; Outlook does not run that container.
 
+## MLS conversations
+
+New calendar events use MLS conversations. The add-in creates the conversation and its guest link through the Wire API, leaving the MLS group uninitialized at epoch 0. A joining Wire client establishes the group. The add-in does not need a cryptographic identity or CoreCrypto.
+
+The August 2026 ADR records that the web app establishes the group when joining the meeting call, and Android establishes it when joining the conversation. On iOS, joining may display "You could not join the conversation", with group establishment delayed until a message is sent. Mobile attendees must sign in through the Wire app.
+
+Verify these flows against the deployed Wire clients, including simultaneous joins, since initialization depends on their behavior. Existing calendar entries reuse their saved links; this change does not migrate their conversations.
+
 ## Configuration
 The program is configured through environment variables listed in the [.env.template](.env.template) file.  
 Depending on the deployment mode, the values are substituted differently:

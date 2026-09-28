@@ -14,7 +14,8 @@ export async function createEvent(name: string): Promise<EventResult> {
       access_role: ["guest", "non_team_member", "team_member", "service"],
       conversation_role: "wire_member",
       name: name,
-      protocol: "proteus",
+      // First joining Wire client establishes the MLS group created by this integration.
+      protocol: "mls",
       qualified_users: [],
       receipt_mode: 1,
       team: {
