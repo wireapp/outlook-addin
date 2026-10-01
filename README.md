@@ -58,7 +58,7 @@ You need Node.js and npm, access to Outlook, and a Wire staging account whose te
    BASE_URL=https://localhost:8080
    ```
 
-   Keep the staging API URL, API version, and authorization endpoint from the copied file.
+   Keep the staging API URL and authorization endpoint from the copied file.
 
 3. Register a development OAuth client in [staging Backoffice](https://staging-backoffice.ops.zinfra.io/swagger-ui/index.html#/default/register-oauth-client) with:
 
