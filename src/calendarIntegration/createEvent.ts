@@ -36,7 +36,7 @@ export async function createEvent(name: string): Promise<EventResult> {
     );
 
     if (response.ok) {
-      const conversationId = (await response.json()).id;
+      const conversationId = (await response.json()).qualified_id.id;
 
       const responseLink: any = await fetchWithAuthorizeDialog(
         new URL(`${config.apiVersion}/conversations/${conversationId}/code`, config.apiBaseUrl),
