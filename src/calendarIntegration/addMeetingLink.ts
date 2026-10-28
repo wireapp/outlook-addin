@@ -4,6 +4,9 @@ import {
   getLocation,
   getMailboxItemSubject,
   getMeetingTime,
+  getStartTime,
+  getEndTime,
+  getOrganizerIanaTimeZone,
   getOrganizer,
   getOrganizerOnMobile,
   isMobileDevice,
@@ -89,8 +92,11 @@ async function createNewMeeting(): Promise<void> {
 
   let subject = await getMailboxItemSubject(mailboxItem);
   subject = await modifyConversationName(subject);
+  const startTime = await getStartTime(mailboxItem);
+  const endTime = await getEndTime(mailboxItem);
+  const timeZone = getOrganizerIanaTimeZone();
 
-  const eventResult = await createEvent(subject);
+  const eventResult = await createEvent(subject, startTime, endTime, timeZone);
 
   if (eventResult) {
     createdMeeting = eventResult;

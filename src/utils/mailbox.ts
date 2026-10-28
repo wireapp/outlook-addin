@@ -1,3 +1,4 @@
+import { findIanaFromWindows } from 'winzones';
 import { PlatformType } from "../types/PlatformTypes";
 
 export async function getMailboxItemSubject(item): Promise<string> {
@@ -76,6 +77,50 @@ export async function getMeetingTime(item): Promise<string> {
       resolve(formattedDate);
     });
   });
+}
+
+export async function getStartTime(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { start } = item;
+
+    start.getAsync(function (asyncResult) {
+      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error(`Action failed with message ${asyncResult.error.message}`);
+        reject(new Error(`Failed to get start time: ${asyncResult.error.message}`));
+        return;
+      }
+      const startTime = asyncResult.value.toISOString();
+      console.log(`The start time in UTC is: ${startTime}`)
+      resolve(startTime);
+    });
+  });
+}
+
+export async function getEndTime(item): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const { end } = item;
+
+    end.getAsync(function (asyncResult) {
+      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error(`Action failed with message ${asyncResult.error.message}`);
+        reject(new Error(`Failed to get start time: ${asyncResult.error.message}`));
+        return;
+      }
+      const startTime = asyncResult.value.toISOString();
+      resolve(startTime);
+    });
+  });
+}
+
+export function getOrganizerIanaTimeZone(): string {
+  const timeZone = Office.context.mailbox.userProfile.timeZone;
+  const ianaTimeZone = findIanaFromWindows(timeZone)?.[0];
+
+  if (!ianaTimeZone) {
+    throw new Error(`Unable to determine IANA time zone for "${timeZone}".`);
+  }
+
+  return ianaTimeZone;
 }
 
 export function getBody(item): Promise<string> {

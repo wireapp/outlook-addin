@@ -2,30 +2,20 @@
 
 import type { EventResult } from "../types/EventResult";
 import { config } from "../utils/config";
-import { getTeamId } from "./getSelf";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
 
-export async function createEvent(name: string): Promise<EventResult> {
+export async function createEvent(name: string, startTime: string, endTime: string, timeZone: string): Promise<EventResult> {
   try {
-    const teamId = await getTeamId();
-
     const payload = {
-      access: ["invite", "code"],
-      access_role: ["guest", "non_team_member", "team_member", "service"],
-      conversation_role: "wire_member",
-      name: name,
-      // First joining Wire client establishes the MLS group created by this integration.
-      protocol: "mls",
-      qualified_users: [],
-      receipt_mode: 1,
-      team: {
-        managed: false,
-        teamid: teamId,
-      },
+      title: name,
+      start_time: startTime,
+      end_time: endTime,
+      tzid: timeZone,
+      type: "scheduled"
     };
 
     const response = await fetchWithAuthorizeDialog(
-      new URL(`${config.apiVersion}/conversations`, config.apiBaseUrl),
+      new URL(`${config.apiVersion}/meetings`, config.apiBaseUrl),
       {
         method: "POST",
         headers: {
