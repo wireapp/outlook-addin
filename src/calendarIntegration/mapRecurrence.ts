@@ -24,16 +24,22 @@ export function mapRecurrence(recurrence: Office.Recurrence | null): MeetingRecu
 
   const { recurrenceType, recurrenceProperties } = recurrence;
   const interval = recurrenceProperties?.interval ?? 1;
+  const endDate = recurrence.seriesTime.getEndDate();
+  const until = endDate ? `${endDate}T23:59:59Z` : undefined;
 
   if (recurrenceType === "daily" && interval === 1) {
-    return { frequency: "daily" };
+    return { frequency: "daily", ...(until && { until }) };
   }
 
   if (recurrenceType === "weekly" && SUPPORTED_WEEKLY_INTERVALS.includes(interval)) {
     const days = recurrenceProperties?.days ?? [];
 
     if (days.length <= 1) {
-      return interval === 1 ? { frequency: "weekly" } : { frequency: "weekly", interval };
+      return {
+        frequency: "weekly",
+        ...(interval !== 1 && { interval }),
+        ...(until && { until }),
+      };
     }
   }
 
