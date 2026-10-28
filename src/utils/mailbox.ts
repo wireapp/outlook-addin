@@ -112,6 +112,21 @@ export async function getEndTime(item): Promise<string> {
   });
 }
 
+export async function getRecurrence(item): Promise<Office.Recurrence | null> {
+  return new Promise((resolve, reject) => {
+    const { recurrence } = item;
+
+    recurrence.getAsync(function (asyncResult) {
+      if (asyncResult.status !== Office.AsyncResultStatus.Succeeded) {
+        console.error(`Action failed with message ${asyncResult.error.message}`);
+        reject(new Error(`Failed to get recurrence: ${asyncResult.error.message}`));
+        return;
+      }
+      resolve(asyncResult.value ?? null);
+    });
+  });
+}
+
 export function getOrganizerIanaTimeZone(): string {
   const timeZone = Office.context.mailbox.userProfile.timeZone;
   const ianaTimeZone = findIanaFromWindows(timeZone)?.[0];

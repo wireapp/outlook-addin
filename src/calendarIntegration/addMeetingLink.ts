@@ -9,6 +9,7 @@ import {
   getOrganizerIanaTimeZone,
   getOrganizer,
   getOrganizerOnMobile,
+  getRecurrence,
   isMobileDevice,
   setLocation,
 } from "../utils/mailbox";
@@ -17,6 +18,7 @@ import { setCustomPropertyAsync, getCustomPropertyAsync } from "../utils/customP
 import { showNotification, removeNotification } from "../utils/notifications";
 import { isOutlookCalIntegrationEnabled } from "./isOutlookCalIntegrationEnabled";
 import { createEvent } from "./createEvent";
+import { UnsupportedRecurrenceError } from "./mapRecurrence";
 import { mailboxItem } from "../commands/commands";
 import type { EventResult } from "../types/EventResult";
 
@@ -95,8 +97,9 @@ async function createNewMeeting(): Promise<void> {
   const startTime = await getStartTime(mailboxItem);
   const endTime = await getEndTime(mailboxItem);
   const timeZone = getOrganizerIanaTimeZone();
+  const recurrence = await getRecurrence(mailboxItem);
 
-  const eventResult = await createEvent(subject, startTime, endTime, timeZone);
+  const eventResult = await createEvent(subject, startTime, endTime, timeZone, recurrence);
 
   if (eventResult) {
     createdMeeting = eventResult;
@@ -223,7 +226,13 @@ function handleAddMeetingLinkError(error: Error): void {
   removeNotification("adding-wire-meeting");
   removeNotification("adding-wire-meeting-error");
 
-  if (error.message.includes("authorization failed")) {
+  if (error instanceof UnsupportedRecurrenceError) {
+    showNotification(
+      "adding-wire-meeting-error",
+      "Wire supports only daily, weekly, every 2 weeks, or every 4 weeks recurrence. Change the recurrence and try again.",
+      Office.MailboxEnums.ItemNotificationMessageType.ErrorMessage
+    );
+  } else if (error.message.includes("authorization failed")) {
     showNotification(
       "adding-wire-meeting-error",
       "Authorization failed.",
