@@ -9,7 +9,7 @@ async function redirectToAuthorize(): Promise<void> {
   const redirectUri = new URL("/callback.html", addInBaseUrl);
   const responseType = "code";
   const state = generateRandomState();
-  const scope = "write:conversations write:conversations_code read:self read:feature_configs";
+  const scope = "write-only:meetings read:self read:feature_configs";
   const codeChallengeMethod = "S256";
   const codeVerifier = generateCodeVerifier();
   const codeChallenge = await generateCodeChallenge(codeVerifier);

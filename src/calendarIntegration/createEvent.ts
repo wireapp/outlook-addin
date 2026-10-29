@@ -2,30 +2,31 @@
 
 import type { EventResult } from "../types/EventResult";
 import { config } from "../utils/config";
-import { getTeamId } from "./getSelf";
 import { fetchWithAuthorizeDialog } from "../wireAuthorize/wireAuthorize";
+import { mapRecurrence } from "./mapRecurrence";
 
-export async function createEvent(name: string): Promise<EventResult> {
+export async function createEvent(
+  name: string,
+  startTime: string,
+  endTime: string,
+  timeZone: string,
+  recurrence: Office.Recurrence | null
+): Promise<EventResult> {
   try {
-    const teamId = await getTeamId();
+    // Throws for unsupported patterns, so no request is sent
+    const meetingRecurrence = mapRecurrence(recurrence);
 
     const payload = {
-      access: ["invite", "code"],
-      access_role: ["guest", "non_team_member", "team_member", "service"],
-      conversation_role: "wire_member",
-      name: name,
-      // First joining Wire client establishes the MLS group created by this integration.
-      protocol: "mls",
-      qualified_users: [],
-      receipt_mode: 1,
-      team: {
-        managed: false,
-        teamid: teamId,
-      },
+      title: name,
+      start_time: startTime,
+      end_time: endTime,
+      tzid: timeZone,
+      type: "scheduled",
+      ...(meetingRecurrence && { recurrence: meetingRecurrence }),
     };
 
     const response = await fetchWithAuthorizeDialog(
-      new URL(`${config.apiVersion}/conversations`, config.apiBaseUrl),
+      new URL(`${config.apiVersion}/meetings`, config.apiBaseUrl),
       {
         method: "POST",
         headers: {
@@ -36,20 +37,9 @@ export async function createEvent(name: string): Promise<EventResult> {
     );
 
     if (response.ok) {
-      const conversationId = (await response.json()).id;
+      const meeting = await response.json();
 
-      const responseLink: any = await fetchWithAuthorizeDialog(
-        new URL(`${config.apiVersion}/conversations/${conversationId}/code`, config.apiBaseUrl),
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ password: null }),
-        }
-      ).then((r) => r.json());
-
-      return { id: conversationId, link: responseLink.data.uri };
+      return { id: meeting.qualified_id.id, link: meeting.link };
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }
