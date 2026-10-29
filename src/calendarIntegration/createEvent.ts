@@ -37,20 +37,9 @@ export async function createEvent(
     );
 
     if (response.ok) {
-      const conversationId = (await response.json()).qualified_id.id;
+      const meeting = await response.json();
 
-      const responseLink: any = await fetchWithAuthorizeDialog(
-        new URL(`${config.apiVersion}/conversations/${conversationId}/code`, config.apiBaseUrl),
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ password: null }),
-        }
-      ).then((r) => r.json());
-
-      return { id: conversationId, link: responseLink.data.uri };
+      return { id: meeting.qualified_id.id, link: meeting.link };
     } else {
       throw new Error(`Request failed with status ${response.status}`);
     }

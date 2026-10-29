@@ -101,7 +101,7 @@ If you choose a different port, update both `BASE_URL` and the OAuth client's re
 ## Authorize
 - URL: [config.authorizeUrl]
 - Callback: [config.addInBaseUrl]/callback.html
-- Scope: write-only:meetings write:conversations_code read:self read:feature_configs
+- Scope: write-only:meetings read:self read:feature_configs
 - State: random 16 hex chars
 - Verifier: random 64 hex chars
 
