@@ -62,19 +62,20 @@ async function fetchCustomProperties(): Promise<void> {
 }
 
 /**
- * Modifies the conversation subject by appending the meeting date.
+ * Returns the conversation subject, falling back to "Meeting with {creator} + {meeting date}" when it is empty.
  *
  * @param {string} conversationSubject - The current subject of the conversation.
- * @return {Promise<string>} The modified conversation subject.
+ * @return {Promise<string>} The conversation subject.
  */
 async function modifyConversationName(conversationSubject: string): Promise<string> {
+  if (conversationSubject) {
+    return conversationSubject;
+  }
+
+  const creator = await getPlatformSpecificOrganizer();
   const meetingDate = await getMeetingTime(mailboxItem);
 
-  const modifiedSubject = conversationSubject
-    ? `CLDR:: ${conversationSubject}`
-    : `CLDR:: ${meetingDate}`;
-
-  return modifiedSubject;
+  return `Meeting with ${creator} + ${meetingDate}`;
 }
 
 /**
